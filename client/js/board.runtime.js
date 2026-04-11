@@ -1370,6 +1370,75 @@
       engine.stopLaser();
       engine.requestRender();
     });
+
+    // ── Custom stroke-width preset buttons ───────────────────────────
+    var widthPresets = Array.prototype.slice.call(document.querySelectorAll("[data-width-preset]"));
+    widthPresets.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var w = Number(btn.dataset.widthPreset);
+        engine.widthInput.value = String(w);
+        engine.currentStyle.width = w;
+        engine.widthValue.textContent = w + " px";
+        widthPresets.forEach(function (b) { b.classList.remove("is-active"); });
+        btn.classList.add("is-active");
+      });
+    });
+
+    // ── Custom stroke-pattern preset buttons ─────────────────────────
+    var patternPresets = Array.prototype.slice.call(document.querySelectorAll("[data-pattern-preset]"));
+    patternPresets.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var p = btn.dataset.patternPreset;
+        engine.strokePattern.value = p;
+        engine.currentStyle.pattern = p;
+        patternPresets.forEach(function (b) { b.classList.remove("is-active"); });
+        btn.classList.add("is-active");
+      });
+    });
+
+    // ── Keep opacity label in sync (hidden input fires "input") ──────
+    engine.opacityValue.textContent = Math.round(Number(engine.opacityInput.value) * 100) + "%";
+
+    // ── Global layout dismiss & theme menu toggle ──────
+    var themeBtn = document.getElementById("theme-btn");
+    var themeMenu = document.getElementById("theme-menu");
+
+    document.addEventListener("click", function (e) {
+      if (themeBtn && themeBtn.contains(e.target)) {
+        var isOpen = themeMenu.classList.contains("is-open");
+        if (!isOpen) {
+          engine.setExportOpen(false);
+          engine.setShareOpen(false);
+          engine.setPropertiesOpen(false);
+        }
+        themeMenu.classList.toggle("is-open");
+        return;
+      }
+
+      if (themeMenu && !themeMenu.contains(e.target)) {
+        themeMenu.classList.remove("is-open");
+      }
+
+      if (engine.exportOpen && engine.exportPanel && !engine.exportPanel.contains(e.target) && !engine.exportToggle.contains(e.target)) {
+        engine.setExportOpen(false);
+      }
+
+      if (engine.shareOpen && engine.sharePanel && !engine.sharePanel.contains(e.target) && !engine.shareToggle.contains(e.target)) {
+        engine.setShareOpen(false);
+      }
+
+      if (engine.propertiesOpen && engine.propertiesPanel && !engine.propertiesPanel.contains(e.target)) {
+        var isToolClick = false;
+        if (engine.toolButtons) {
+          for (var i = 0; i < engine.toolButtons.length; i++) {
+            if (engine.toolButtons[i].contains(e.target)) isToolClick = true;
+          }
+        }
+        if (!isToolClick && !e.target.closest('.property-ignore-click')) {
+          engine.setPropertiesOpen(false);
+        }
+      }
+    });
   };
 
   CanvasEngine.prototype.styleForTool = function (toolName) {

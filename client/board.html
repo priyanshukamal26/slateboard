@@ -3,389 +3,560 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Slateboard Board</title>
+    <title>Slateboard — Whiteboard</title>
+    <meta name="description" content="Real-time collaborative whiteboard for teachers and students." />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Font Awesome 6 (free) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <!-- App styles -->
     <link rel="stylesheet" href="./css/tokens.css" />
     <link rel="stylesheet" href="./css/base.css" />
     <link rel="stylesheet" href="./css/components.css" />
     <link rel="stylesheet" href="./css/board.css" />
   </head>
+
   <body class="board-body">
     <div class="board-shell" data-toolbar-open="false" data-properties-open="false">
-      <header class="brandbar">
-        <div class="logo-badge">Slateboard</div>
-      </header>
 
-      <header class="topbar">
+      <!-- ═══════════════════════════════════════════
+           TOP BAR
+      ═══════════════════════════════════════════ -->
+      <header class="topbar" role="banner">
+
+        <!-- Left: Logo + status -->
+        <div class="topbar-left">
+          <a class="logo-mark" href="/" title="Slateboard home" aria-label="Slateboard">
+            <span>SLATEBOARD</span>
+          </a>
+          <div class="board-status">
+            <span class="room-pill" id="room-badge">
+              <i class="fa-solid fa-link room-pill__icon"></i>
+              <span id="room-key">Local</span>
+            </span>
+            <span class="mode-label" id="board-mode-label">Local board</span>
+            <span class="save-label" id="save-status">Saved</span>
+          </div>
+        </div>
+
+        <!-- Centre: Theme + Drawing tool strip -->
         <div class="topbar-center">
-          <div class="status-badge" id="room-badge">
-            <span>Room</span>
-            <strong id="room-key">Local</strong>
+          
+          <!-- Theme Dropdown -->
+          <div class="theme-dropdown">
+            <button class="tool-btn" type="button" aria-label="Canvas Theme" title="Canvas Background" id="theme-btn">
+              <i class="fa-solid fa-image"></i>
+            </button>
+            <div class="theme-menu" id="theme-menu">
+              <div class="panel-group">
+                <span class="panel-label">Canvas Background</span>
+                <div class="preset-row">
+                  <button class="bg-preset-btn is-active" type="button" data-background="blank" title="Blank">
+                    <span class="bg-preview"></span>
+                  </button>
+                  <button class="bg-preset-btn" type="button" data-background="dot" title="Dot grid">
+                    <span class="bg-preview bg-preview--dot"></span>
+                  </button>
+                  <button class="bg-preset-btn" type="button" data-background="line" title="Line grid">
+                    <span class="bg-preview bg-preview--line"></span>
+                  </button>
+                  <button class="bg-preset-btn" type="button" data-background="white" title="White">
+                    <span class="bg-preview bg-preview--white"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="status-badge">
-            <span id="board-mode-label">Local board</span>
-            <strong id="save-status">Saved</strong>
-          </div>
-        </div>
-        <div class="topbar-actions">
-          <div class="presence-strip" id="presence-strip" aria-label="Connected users"></div>
-          <button class="btn btn-secondary topbar-btn" id="share-toggle" type="button">
-            Share
+
+          <nav class="toolbar-strip" aria-label="Drawing tools" role="toolbar">
+
+          <!-- Selection group -->
+          <button class="tool-btn" data-tool="select" type="button"
+            aria-label="Selection tool" title="Select  V">
+            <i class="fa-solid fa-arrow-pointer"></i>
           </button>
-          <button class="btn btn-secondary topbar-btn" id="export-toggle" type="button">
-            Export
+          <button class="tool-btn" data-tool="pan" type="button"
+            aria-label="Pan / hand tool" title="Pan  H">
+            <i class="fa-regular fa-hand"></i>
+          </button>
+
+          <span class="tool-sep" role="separator" aria-hidden="true"></span>
+
+          <!-- Drawing group -->
+          <button class="tool-btn" data-tool="pen" type="button"
+            aria-label="Pen tool" title="Pen  P">
+            <i class="fa-solid fa-pen"></i>
+          </button>
+          <button class="tool-btn" data-tool="highlight" type="button"
+            aria-label="Highlighter tool" title="Marker  M">
+            <i class="fa-solid fa-highlighter"></i>
+          </button>
+          <button class="tool-btn" data-tool="line" type="button"
+            aria-label="Line tool" title="Line  L">
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 20 20"
+              fill="none" stroke="currentColor" stroke-linecap="round"
+              stroke-linejoin="round" width="20" height="20">
+              <path d="M4.167 10h11.666" stroke-width="1.5"></path>
+            </svg>
+          </button>
+          <button class="tool-btn" data-tool="rect" type="button"
+            aria-label="Rectangle tool" title="Rectangle  R">
+            <i class="fa-regular fa-square"></i>
+          </button>
+          <button class="tool-btn" data-tool="ellipse" type="button"
+            aria-label="Ellipse tool" title="Ellipse  O">
+            <i class="fa-regular fa-circle"></i>
+          </button>
+          <button class="tool-btn" data-tool="arrow" type="button"
+            aria-label="Arrow tool" title="Arrow  A">
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+          <button class="tool-btn" data-tool="text" type="button"
+            aria-label="Text tool" title="Text  T">
+            <i class="fa-solid fa-a"></i>
+          </button>
+
+          <span class="tool-sep" role="separator" aria-hidden="true"></span>
+
+          <!-- Utility group -->
+          <button class="tool-btn" data-tool="eraser" type="button"
+            aria-label="Eraser tool" title="Erase  E">
+            <i class="fa-solid fa-eraser"></i>
+          </button>
+          <button class="tool-btn" data-tool="laser" type="button"
+            aria-label="Laser pointer" title="Laser  K">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </button>
+        </nav>
+        </div>
+
+        <!-- Right: Presence + actions -->
+        <div class="topbar-right">
+          <div class="presence-strip" id="presence-strip" aria-label="Connected collaborators"></div>
+
+          <button class="topbar-action-btn" id="share-toggle" type="button"
+            aria-label="Share / collaborate" aria-expanded="false">
+            <i class="fa-solid fa-user-group"></i>
+            <span>Share</span>
+          </button>
+
+          <button class="topbar-action-btn topbar-action-btn--icon" id="export-toggle" type="button"
+            aria-label="Export board" aria-expanded="false" title="Export">
+            <i class="fa-solid fa-arrow-up-from-bracket"></i>
           </button>
         </div>
       </header>
 
-      <aside class="left-dock" aria-label="Board controls">
-        <div class="dock-stack">
-          <button
-            class="dock-toggle btn btn-accent"
-            id="toolbar-toggle"
-            type="button"
-            aria-label="Open drawing tools"
-            aria-expanded="false"
-          >
-            Pen
-          </button>
+      <!-- ═══════════════════════════════════════════
+           GHOST ELEMENTS — referenced by JS, not rendered
+      ═══════════════════════════════════════════ -->
+      <button id="toolbar-toggle"  style="display:none" aria-expanded="false">Pen</button>
+      <button id="board-toggle"    style="display:none" aria-expanded="false">Board</button>
+      <button id="toolbar-close"   style="display:none">Close</button>
+      <button id="board-close"     style="display:none">Close</button>
+      <div    id="tool-rail"       style="display:none"></div>
 
-          <button
-            class="dock-toggle btn btn-secondary"
-            id="board-toggle"
-            type="button"
-            aria-label="Open board settings"
-            aria-expanded="false"
-          >
-            Board
-          </button>
-        </div>
+      <!-- ═══════════════════════════════════════════
+           PROPERTIES PANEL (floating left)
+      ═══════════════════════════════════════════ -->
+      <aside class="properties-panel" id="properties-panel"
+        aria-label="Tool properties" hidden>
 
-        <div class="tool-rail card" id="tool-rail" aria-label="Drawing tools" hidden>
-          <div class="rail-header">
-            <span class="rail-title">Tools</span>
-            <button
-              class="collapse-button"
-              id="toolbar-close"
-              type="button"
-              aria-label="Collapse tool bar"
-            >
-              Close
-            </button>
-          </div>
-
-          <div class="tool-grid">
-            <button class="tool-button" type="button" data-tool="select" aria-label="Selection tool">
-              Select
-            </button>
-            <button class="tool-button" type="button" data-tool="pan" aria-label="Pan tool">
-              Pan
-            </button>
-            <button
-              class="tool-button is-active"
-              type="button"
-              data-tool="pen"
-              aria-label="Pen tool"
-            >
-              Pen
-            </button>
-            <button class="tool-button" type="button" data-tool="highlight" aria-label="Highlighter tool">
-              Mark
-            </button>
-            <button class="tool-button" type="button" data-tool="line" data-properties="line" aria-label="Line tool">
-              Line
-            </button>
-            <button class="tool-button" type="button" data-tool="rect" data-properties="rect" aria-label="Rectangle tool">
-              Rect
-            </button>
-            <button class="tool-button" type="button" data-tool="ellipse" data-properties="ellipse" aria-label="Ellipse tool">
-              Ellipse
-            </button>
-            <button class="tool-button" type="button" data-tool="arrow" data-properties="arrow" aria-label="Arrow tool">
-              Arrow
-            </button>
-            <button class="tool-button" type="button" data-tool="text" data-properties="text" aria-label="Text tool">
-              Text
-            </button>
-            <button class="tool-button" type="button" data-tool="eraser" data-properties="eraser" aria-label="Eraser tool">
-              Erase
-            </button>
-            <button class="tool-button" type="button" data-tool="laser" aria-label="Laser pointer tool">
-              Laser
-            </button>
-          </div>
-        </div>
-
-        <section class="properties-panel card" id="properties-panel" aria-label="Tool properties" hidden>
-          <div class="rail-header">
-            <div class="panel-heading">
-              <p class="panel-kicker">Tool settings</p>
-              <h2 id="properties-title">Pen</h2>
-            </div>
-            <button
-              class="collapse-button"
-              id="properties-close"
-              type="button"
-              aria-label="Collapse tool settings"
-            >
-              Close
-            </button>
-          </div>
-
-          <p class="tool-help" id="tool-help">
-            Pen is active by default. Adjust weight, opacity, color, and background here.
-          </p>
-
-          <div class="panel-group">
-            <label class="panel-label" for="stroke-pattern">Stroke type</label>
-            <select id="stroke-pattern" class="brutal-select">
-              <option value="solid">Solid</option>
-              <option value="dashed">Dashed</option>
-              <option value="dotted">Dotted</option>
-            </select>
-          </div>
-
-          <div class="panel-group">
-            <label class="panel-label" for="stroke-width">Stroke width</label>
-            <input id="stroke-width" type="range" min="1" max="20" value="6" />
-            <div class="range-value" id="stroke-width-value">6 px</div>
-          </div>
-
-          <div class="panel-group">
-            <label class="panel-label" for="stroke-opacity">Opacity</label>
-            <input id="stroke-opacity" type="range" min="0.1" max="1" step="0.05" value="1" />
-            <div class="range-value" id="stroke-opacity-value">100%</div>
-          </div>
-
-          <div class="panel-group">
-            <label class="check-row" for="fill-toggle">
-              <input id="fill-toggle" type="checkbox" />
-              <span>Fill shapes</span>
-            </label>
-          </div>
-
-          <div class="panel-group">
-            <label class="panel-label" for="text-size">Text size</label>
-            <input id="text-size" type="range" min="12" max="72" value="24" />
-            <div class="range-value" id="text-size-value">24 px</div>
-          </div>
-
-          <div class="panel-group">
-            <label class="panel-label" for="arrow-head">Arrow head</label>
-            <input id="arrow-head" type="range" min="8" max="36" value="18" />
-            <div class="range-value" id="arrow-head-value">18 px</div>
-          </div>
-
-          <div class="panel-group">
-            <p class="panel-label">Eraser sweep</p>
-            <p class="tool-help">
-              Drag across the canvas to remove every element your sweep touches.
-            </p>
-          </div>
-
-          <div class="panel-group">
-            <span class="panel-label">Stroke color</span>
-            <div class="swatch-grid" id="swatch-grid">
-              <button class="swatch is-selected" type="button" data-color="#000000" style="--swatch:#000000" aria-label="Ink"></button>
-              <button class="swatch" type="button" data-color="#FF6B6B" style="--swatch:#FF6B6B" aria-label="Accent red"></button>
-              <button class="swatch" type="button" data-color="#FFD93D" style="--swatch:#FFD93D" aria-label="Signal yellow"></button>
-              <button class="swatch" type="button" data-color="#C4B5FD" style="--swatch:#C4B5FD" aria-label="Muted violet"></button>
-              <button class="swatch" type="button" data-color="#2EC4B6" style="--swatch:#2EC4B6" aria-label="Sea green"></button>
-              <button class="swatch" type="button" data-color="#FFFFFF" style="--swatch:#FFFFFF" aria-label="White"></button>
-            </div>
-          </div>
-
-        </section>
-
-        <section class="board-panel card" id="board-panel" aria-label="Board settings" hidden>
-          <div class="rail-header">
-            <div class="panel-heading">
-              <p class="panel-kicker">Board settings</p>
-              <h2>Canvas</h2>
-            </div>
-            <button
-              class="collapse-button"
-              id="board-close"
-              type="button"
-              aria-label="Collapse board settings"
-            >
-              Close
-            </button>
-          </div>
-
-          <p class="tool-help">
-            Background, grid tone, and view behavior live here so element styling stays separate.
-          </p>
-
-          <div class="panel-group">
-            <span class="panel-label">Background</span>
-            <div class="segment-control">
-              <button class="segment-button is-active" type="button" data-background="blank">Blank</button>
-              <button class="segment-button" type="button" data-background="dot">Dot</button>
-              <button class="segment-button" type="button" data-background="line">Line</button>
-              <button class="segment-button" type="button" data-background="white">White</button>
-            </div>
-          </div>
-        </section>
-
-      </aside>
-
-      <section class="export-panel card" id="export-panel" aria-label="Export settings" hidden>
-        <div class="rail-header">
-          <div class="panel-heading">
-            <p class="panel-kicker">Export</p>
-            <h2>Download</h2>
-          </div>
-          <button
-            class="collapse-button"
-            id="export-close"
-            type="button"
-            aria-label="Collapse export settings"
-          >
-            Close
+        <div class="props-header">
+          <span class="props-title" id="properties-title">Pen</span>
+          <button class="icon-close-btn" id="properties-close" type="button"
+            aria-label="Close properties">
+            <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
 
+        <p class="tool-help" id="tool-help">Click to start drawing.</p>
+
+        <!-- Stroke colour -->
         <div class="panel-group">
-          <label class="panel-label" for="export-filename">File name</label>
-          <input id="export-filename" class="brutal-input" type="text" value="slateboard-board" />
+          <span class="panel-label">Stroke</span>
+          <div class="swatch-grid">
+            <button class="swatch is-selected" type="button" data-color="#1e1e1e"
+              style="--swatch:#1e1e1e" aria-label="Black"></button>
+            <button class="swatch" type="button" data-color="#e03131"
+              style="--swatch:#e03131" aria-label="Red"></button>
+            <button class="swatch" type="button" data-color="#f08c00"
+              style="--swatch:#f08c00" aria-label="Orange"></button>
+            <button class="swatch" type="button" data-color="#2f9e44"
+              style="--swatch:#2f9e44" aria-label="Green"></button>
+            <button class="swatch" type="button" data-color="#1971c2"
+              style="--swatch:#1971c2" aria-label="Blue"></button>
+            <button class="swatch" type="button" data-color="#862e9c"
+              style="--swatch:#862e9c" aria-label="Purple"></button>
+            <button class="swatch" type="button" data-color="#FF6B6B"
+              style="--swatch:#FF6B6B" aria-label="Coral"></button>
+            <button class="swatch" type="button" data-color="#2EC4B6"
+              style="--swatch:#2EC4B6" aria-label="Teal"></button>
+            <button class="swatch" type="button" data-color="#C4B5FD"
+              style="--swatch:#C4B5FD" aria-label="Lavender"></button>
+            <button class="swatch swatch--white" type="button" data-color="#ffffff"
+              style="--swatch:#ffffff" aria-label="White"></button>
+          </div>
         </div>
 
+        <!-- Stroke width -->
         <div class="panel-group">
-          <label class="check-row" for="export-include-background">
-            <input id="export-include-background" type="checkbox" checked />
-            <span>Include theme</span>
+          <span class="panel-label">Stroke width</span>
+          <div class="preset-row">
+            <button class="width-preset-btn is-active" type="button" data-width-preset="2" title="Thin">
+              <span class="stroke-preview stroke-preview--s"></span>
+            </button>
+            <button class="width-preset-btn" type="button" data-width-preset="6" title="Medium">
+              <span class="stroke-preview stroke-preview--m"></span>
+            </button>
+            <button class="width-preset-btn" type="button" data-width-preset="14" title="Thick">
+              <span class="stroke-preview stroke-preview--l"></span>
+            </button>
+          </div>
+          <!-- Hidden input — JS binds to this -->
+          <input id="stroke-width" type="range" min="1" max="20" value="6" aria-label="Stroke width" style="display:none" />
+          <span id="stroke-width-value" style="display:none">6 px</span>
+        </div>
+
+        <!-- Stroke style -->
+        <div class="panel-group">
+          <span class="panel-label">Stroke style</span>
+          <div class="preset-row">
+            <button class="style-preset-btn is-active" type="button" data-pattern-preset="solid" title="Solid">
+              <span class="dash-preview dash-preview--solid"></span>
+            </button>
+            <button class="style-preset-btn" type="button" data-pattern-preset="dashed" title="Dashed">
+              <span class="dash-preview dash-preview--dashed"></span>
+            </button>
+            <button class="style-preset-btn" type="button" data-pattern-preset="dotted" title="Dotted">
+              <span class="dash-preview dash-preview--dotted"></span>
+            </button>
+          </div>
+          <!-- Hidden select — JS binds to this -->
+          <select id="stroke-pattern" aria-label="Stroke pattern" style="display:none">
+            <option value="solid">Solid</option>
+            <option value="dashed">Dashed</option>
+            <option value="dotted">Dotted</option>
+          </select>
+        </div>
+
+        <!-- Fill toggle (rect / ellipse only) -->
+        <div class="panel-group">
+          <label class="toggle-row" for="fill-toggle">
+            <input id="fill-toggle" type="checkbox" class="toggle-check" />
+            <span class="toggle-label">Fill shape</span>
           </label>
         </div>
 
-        <div class="panel-actions export-actions">
-          <button class="btn btn-secondary" id="export-png-button" type="button">PNG view</button>
-          <button class="btn btn-secondary" id="export-png-full-button" type="button">PNG full</button>
+        <!-- Text size (text tool only) -->
+        <div class="panel-group">
+          <div class="panel-label-row">
+            <span class="panel-label">Text size</span>
+            <span class="range-value" id="text-size-value">24 px</span>
+          </div>
+          <input id="text-size" type="range" min="12" max="72" value="24"
+            aria-label="Text size" />
         </div>
 
-        <div class="panel-actions export-actions">
-          <button class="btn btn-secondary" id="export-svg-button" type="button">SVG</button>
+        <!-- Arrow head (arrow tool only) -->
+        <div class="panel-group">
+          <div class="panel-label-row">
+            <span class="panel-label">Arrow head</span>
+            <span class="range-value" id="arrow-head-value">18 px</span>
+          </div>
+          <input id="arrow-head" type="range" min="8" max="36" value="18"
+            aria-label="Arrow head size" />
+        </div>
+
+        <!-- Opacity -->
+        <div class="panel-group">
+          <div class="panel-label-row">
+            <span class="panel-label">Opacity</span>
+            <span class="range-value" id="stroke-opacity-value">100%</span>
+          </div>
+          <input id="stroke-opacity" type="range" min="0.1" max="1" step="0.05" value="1"
+            aria-label="Opacity" />
+        </div>
+
+
+      </aside>
+
+      <!-- ═══════════════════════════════════════════
+           BOARD PANEL — ghost (background in properties now)
+      ═══════════════════════════════════════════ -->
+      <section class="board-panel" id="board-panel"
+        aria-label="Board settings" hidden>
+        <!-- [data-background] buttons exist above; this panel is a JS-required ghost -->
+      </section>
+
+      <!-- ═══════════════════════════════════════════
+           EXPORT PANEL
+      ═══════════════════════════════════════════ -->
+      <section class="float-panel" id="export-panel"
+        aria-label="Export options" hidden>
+        <div class="float-panel-header">
+          <span class="float-panel-title">Export</span>
+          <button class="icon-close-btn" id="export-close" type="button"
+            aria-label="Close export panel">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="panel-group">
+          <label class="panel-label" for="export-filename">File name</label>
+          <input id="export-filename" class="text-input" type="text"
+            value="slateboard-board" autocomplete="off" />
+        </div>
+        <div class="panel-group">
+          <label class="toggle-row" for="export-include-background">
+            <input id="export-include-background" type="checkbox"
+              class="toggle-check" checked />
+            <span class="toggle-label">Include background</span>
+          </label>
+        </div>
+        <div class="export-actions">
+          <button class="export-btn" id="export-png-button" type="button">
+            <i class="fa-regular fa-image"></i> View PNG
+          </button>
+          <button class="export-btn" id="export-png-full-button" type="button">
+            <i class="fa-solid fa-expand"></i> Full PNG
+          </button>
+          <button class="export-btn" id="export-svg-button" type="button">
+            <i class="fa-solid fa-bezier-curve"></i> SVG
+          </button>
         </div>
       </section>
 
-      <section class="share-panel card" id="share-panel" aria-label="Share settings" hidden>
-        <div class="rail-header">
-          <div class="panel-heading">
-            <p class="panel-kicker">Share</p>
-            <h2>Collaborate</h2>
-          </div>
-          <button class="collapse-button" id="share-close" type="button" aria-label="Close share settings">
-            Close
+      <!-- ═══════════════════════════════════════════
+           SHARE PANEL
+      ═══════════════════════════════════════════ -->
+      <section class="float-panel float-panel--wide" id="share-panel"
+        aria-label="Share and collaborate" hidden>
+        <div class="float-panel-header">
+          <span class="float-panel-title">Collaborate</span>
+          <button class="icon-close-btn" id="share-close" type="button"
+            aria-label="Close share panel">
+            <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
-
         <div class="panel-group">
           <label class="panel-label" for="share-room-key">Room key</label>
-          <input id="share-room-key" class="brutal-input" type="text" readonly />
+          <div class="copy-field">
+            <input id="share-room-key" class="text-input text-input--mono" type="text"
+              readonly aria-label="Room key" />
+            <button class="copy-btn" id="copy-room-button" type="button"
+              aria-label="Copy room key">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
         </div>
-
         <div class="panel-group">
           <label class="panel-label" for="share-url">Share URL</label>
-          <input id="share-url" class="brutal-input" type="text" readonly />
+          <div class="copy-field">
+            <input id="share-url" class="text-input text-input--small" type="text"
+              readonly aria-label="Share URL" />
+            <button class="copy-btn" id="copy-share-button" type="button"
+              aria-label="Copy share link">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
         </div>
-
         <div class="panel-group">
           <label class="panel-label" for="share-default-role">Default join role</label>
-          <select id="share-default-role" class="brutal-select">
+          <select id="share-default-role" class="text-select" aria-label="Default join role">
             <option value="editor">Editor</option>
             <option value="viewer">Viewer</option>
           </select>
         </div>
-
-        <div class="panel-actions export-actions">
-          <button class="btn btn-secondary" id="copy-room-button" type="button">Copy room</button>
-          <button class="btn btn-secondary" id="copy-share-button" type="button">Copy link</button>
-        </div>
-
-        <div class="panel-actions export-actions">
-          <button class="btn btn-secondary" id="update-share-button" type="button">Update invite</button>
-        </div>
-
         <div class="panel-group">
-          <span class="panel-label">Collaborators</span>
+          <button class="invite-btn" id="update-share-button" type="button">
+            <i class="fa-solid fa-rotate"></i> Update invite
+          </button>
+        </div>
+        <div class="panel-group">
+          <span class="panel-label">People</span>
           <div class="collaborator-list" id="collaborator-list"></div>
         </div>
       </section>
 
+      <!-- ═══════════════════════════════════════════
+           CANVAS
+      ═══════════════════════════════════════════ -->
       <main class="canvas-stage" aria-label="Whiteboard canvas">
-        <div class="canvas-frame">
-          <canvas id="board-canvas"></canvas>
-          <textarea
-            id="inline-text-editor"
-            class="inline-text-editor"
-            rows="1"
-            hidden
-            aria-label="Inline text editor"
-          ></textarea>
-        </div>
+        <canvas id="board-canvas" aria-hidden="true"></canvas>
+        <textarea
+          id="inline-text-editor"
+          class="inline-text-editor"
+          rows="1"
+          hidden
+          aria-label="Type text on canvas"
+          autocomplete="off"
+          spellcheck="false"
+        ></textarea>
       </main>
+
+    </div><!-- /.board-shell -->
+
+    <!-- ═══════════════════════════════════════════
+         ZOOM DOCK — bottom left
+    ═══════════════════════════════════════════ -->
+    <div class="zoom-dock" id="zoom-dock" aria-label="Zoom controls">
+      <button class="dock-icon-btn" id="undo-button" type="button"
+        aria-label="Undo (Ctrl+Z)" title="Undo">
+        <i class="fa-solid fa-rotate-left"></i>
+      </button>
+      <button class="dock-icon-btn" id="redo-button" type="button"
+        aria-label="Redo (Ctrl+Y)" title="Redo">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+
+      <span class="dock-sep" role="separator" aria-hidden="true"></span>
+
+      <button class="dock-icon-btn" id="zoom-out-button" type="button"
+        aria-label="Zoom out" title="Zoom out">
+        <i class="fa-solid fa-minus"></i>
+      </button>
+      <span class="zoom-value" id="zoom-indicator" aria-live="polite" aria-atomic="true">100%</span>
+      <button class="dock-icon-btn" id="zoom-in-button" type="button"
+        aria-label="Zoom in" title="Zoom in">
+        <i class="fa-solid fa-plus"></i>
+      </button>
+
+      <span class="dock-sep" role="separator" aria-hidden="true"></span>
+
+      <button class="dock-icon-btn" id="fit-button" type="button"
+        aria-label="Fit content to screen" title="Fit to content">
+        <i class="fa-solid fa-expand"></i>
+      </button>
+
+      <!-- Ghost inputs/buttons — JS binds to these -->
+      <input id="zoom-range" type="range" min="25" max="400" value="100"
+        aria-hidden="true" style="display:none" />
+      <input id="zoom-input" class="zoom-input" type="number" min="25" max="400"
+        value="100" aria-hidden="true" style="display:none" />
+      <button id="zoom-toggle" style="display:none">Hide</button>
     </div>
 
-    <div class="zoom-dock card" id="zoom-dock" aria-label="Zoom controls">
-      <div class="zoom-dock-head">
-        <span class="panel-kicker">Zoom</span>
-        <button class="collapse-button zoom-toggle" id="zoom-toggle" type="button" aria-label="Collapse zoom controls">
-          Hide
-        </button>
-      </div>
-      <div class="zoom-dock-body" id="zoom-dock-body">
-        <div class="zoom-primary">
-          <button class="btn btn-secondary zoom-step" id="zoom-out-button" type="button">-</button>
-          <div class="zoom-chip zoom-readout" id="zoom-indicator">100%</div>
-          <button class="btn btn-secondary zoom-step" id="zoom-in-button" type="button">+</button>
-        </div>
-        <input id="zoom-range" type="range" min="25" max="400" value="100" />
-        <div class="zoom-dock-actions">
-          <input id="zoom-input" class="brutal-input zoom-input" type="number" min="25" max="400" value="100" />
-          <button class="btn btn-secondary zoom-fit" id="fit-button" type="button">Fit</button>
-        </div>
-      </div>
+    <!-- ═══════════════════════════════════════════
+         HISTORY DOCK — bottom right (ghost, undo/redo merged into zoom-dock above)
+    ═══════════════════════════════════════════ -->
+    <div class="history-dock" aria-hidden="true" style="display:none">
+      <!-- Undo/redo are in zoom-dock. These ghost elements satisfy any CSS selectors. -->
     </div>
 
-    <div class="history-dock card" aria-label="History controls">
-      <button class="btn btn-secondary history-button" id="undo-button" type="button">Undo</button>
-      <button class="btn btn-secondary history-button" id="redo-button" type="button">Redo</button>
-    </div>
+    <!-- ═══════════════════════════════════════════
+         TOAST STACK
+    ═══════════════════════════════════════════ -->
+    <div class="toast-stack" id="toast-stack"
+      aria-live="polite" aria-atomic="false" role="status"></div>
 
-    <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+    <!-- ═══════════════════════════════════════════
+         KEYBOARD SHORTCUTS MODAL
+    ═══════════════════════════════════════════ -->
+    <div class="modal-overlay" id="shortcuts-modal" hidden aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true"
+        aria-labelledby="shortcuts-heading">
 
-    <div class="shortcuts-modal" id="shortcuts-modal" hidden aria-hidden="true">
-      <div class="shortcuts-card card" role="dialog" aria-modal="true" aria-labelledby="shortcuts-title">
-        <div class="rail-header">
-          <div class="panel-heading">
-            <p class="panel-kicker">Keyboard shortcuts</p>
-            <h2 id="shortcuts-title">Shortcuts</h2>
-          </div>
-          <button class="collapse-button" id="shortcuts-close" type="button" aria-label="Close shortcuts">
-            Close
+        <div class="modal-header">
+          <h2 class="modal-title" id="shortcuts-heading">Keyboard Shortcuts</h2>
+          <button class="icon-close-btn" id="shortcuts-close" type="button"
+            aria-label="Close shortcuts panel">
+            <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
 
         <div class="shortcuts-grid">
-          <div class="shortcut-item"><span class="shortcut-key">?</span><span>Open shortcuts</span></div>
-          <div class="shortcut-item"><span class="shortcut-key">Pan</span><span>Move across the board</span></div>
-          <div class="shortcut-item"><span class="shortcut-key">Ctrl + wheel</span><span>Zoom</span></div>
-          <div class="shortcut-item"><span class="shortcut-key">Ctrl + Z</span><span>Undo</span></div>
-          <div class="shortcut-item"><span class="shortcut-key">Ctrl + Shift + Z</span><span>Redo</span></div>
-          <div class="shortcut-item"><span class="shortcut-key">Ctrl + Y</span><span>Redo</span></div>
-          <div class="shortcut-item"><span class="shortcut-key">Delete</span><span>Delete selection</span></div>
-          <div class="shortcut-item"><span class="shortcut-key">Arrows</span><span>Nudge selection</span></div>
-          <div class="shortcut-item"><span class="shortcut-key">Shift + Arrows</span><span>Nudge by 10px</span></div>
-          <div class="shortcut-item"><span class="shortcut-key">Esc</span><span>Close trays or modal</span></div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>V</kbd></div>
+            <span>Select</span>
+          </div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>H</kbd></div>
+            <span>Pan</span>
+          </div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>P</kbd></div>
+            <span>Pen</span>
+          </div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>L</kbd></div>
+            <span>Line</span>
+          </div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>R</kbd></div>
+            <span>Rectangle</span>
+          </div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>O</kbd></div>
+            <span>Ellipse</span>
+          </div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>A</kbd></div>
+            <span>Arrow</span>
+          </div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>T</kbd></div>
+            <span>Text</span>
+          </div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>E</kbd></div>
+            <span>Eraser</span>
+          </div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>Space</kbd> + drag</div>
+            <span>Pan canvas</span>
+          </div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>Ctrl</kbd> + scroll</div>
+            <span>Zoom</span>
+          </div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>Ctrl</kbd> <kbd>Z</kbd></div>
+            <span>Undo</span>
+          </div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>Ctrl</kbd> <kbd>Y</kbd></div>
+            <span>Redo</span>
+          </div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>Del</kbd></div>
+            <span>Delete selection</span>
+          </div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>↑ ↓ ← →</kbd></div>
+            <span>Nudge 1 px</span>
+          </div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>Shift</kbd> + arrows</div>
+            <span>Nudge 10 px</span>
+          </div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>?</kbd></div>
+            <span>This help</span>
+          </div>
+          <div class="shortcut-row">
+            <div class="shortcut-keys"><kbd>Esc</kbd></div>
+            <span>Close panel</span>
+          </div>
         </div>
+
       </div>
     </div>
 
+    <!-- Socket.IO + runtime -->
     <script src="/socket.io/socket.io.js"></script>
     <script defer src="./js/board.runtime.js"></script>
   </body>

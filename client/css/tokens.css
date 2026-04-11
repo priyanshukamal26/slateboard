@@ -48,4 +48,6 @@
     radial-gradient(circle, var(--color-ink) 1.2px, transparent 1.2px);
   --pattern-halftone:
     radial-gradient(circle at 1px 1px, var(--color-ink) 1px, transparent 0);
+  --pattern-halftone-light:
+    radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.15) 1px, transparent 0);
 }
