@@ -94,3 +94,34 @@
 .segment-button.is-active {
   background: var(--color-muted);
 }
+
+.github-float-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-white);
+  border: var(--border-heavy);
+  box-shadow: var(--shadow-hard);
+  color: var(--color-ink);
+  font-size: 1.75rem;
+  border-radius: 50%;
+  text-decoration: none;
+  z-index: 1000;
+  transition: transform var(--transition-base), box-shadow var(--transition-base), background var(--transition-base);
+}
+
+.github-float-btn:hover {
+  background: var(--color-accent);
+  transform: translate(-3px, -3px);
+  box-shadow: 6px 6px 0 var(--color-ink);
+}
+
+.github-float-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: var(--shadow-pressed);
+}

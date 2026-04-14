@@ -57,30 +57,32 @@
         <div class="topbar-center">
           
           <!-- Theme Dropdown -->
-          <div class="theme-dropdown">
-            <button class="tool-btn" type="button" aria-label="Canvas Theme" title="Canvas Background" id="theme-btn">
-              <i class="fa-solid fa-image"></i>
-            </button>
-            <div class="theme-menu" id="theme-menu">
-              <div class="panel-group">
-                <span class="panel-label">Canvas Background</span>
-                <div class="preset-row">
-                  <button class="bg-preset-btn is-active" type="button" data-background="blank" title="Blank">
-                    <span class="bg-preview"></span>
-                  </button>
-                  <button class="bg-preset-btn" type="button" data-background="dot" title="Dot grid">
-                    <span class="bg-preview bg-preview--dot"></span>
-                  </button>
-                  <button class="bg-preset-btn" type="button" data-background="line" title="Line grid">
-                    <span class="bg-preview bg-preview--line"></span>
-                  </button>
-                  <button class="bg-preset-btn" type="button" data-background="white" title="White">
-                    <span class="bg-preview bg-preview--white"></span>
-                  </button>
+          <nav class="toolbar-strip" aria-label="Theme options" role="toolbar">
+            <div class="theme-dropdown">
+              <button class="tool-btn" type="button" aria-label="Canvas Theme" title="Canvas Background" id="theme-btn">
+                <i class="fa-solid fa-image"></i>
+              </button>
+              <div class="theme-menu" id="theme-menu">
+                <div class="panel-group">
+                  <span class="panel-label">Canvas Background</span>
+                  <div class="preset-row">
+                    <button class="bg-preset-btn is-active" type="button" data-background="blank" title="Blank">
+                      <span class="bg-preview"></span>
+                    </button>
+                    <button class="bg-preset-btn" type="button" data-background="dot" title="Dot grid">
+                      <span class="bg-preview bg-preview--dot"></span>
+                    </button>
+                    <button class="bg-preset-btn" type="button" data-background="line" title="Line grid">
+                      <span class="bg-preview bg-preview--line"></span>
+                    </button>
+                    <button class="bg-preset-btn" type="button" data-background="white" title="White">
+                      <span class="bg-preview bg-preview--white"></span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </nav>
 
           <nav class="toolbar-strip" aria-label="Drawing tools" role="toolbar">
 
@@ -559,5 +561,9 @@
     <!-- Socket.IO + runtime -->
     <script src="/socket.io/socket.io.js"></script>
     <script defer src="./js/board.runtime.js"></script>
+
+    <a href="https://github.com/priyanshukamal26/slateboard" target="_blank" rel="noopener noreferrer" class="github-float-btn" aria-label="View original GitHub repository" title="GitHub Repository">
+      <i class="fa-brands fa-github"></i>
+    </a>
   </body>
 </html>
