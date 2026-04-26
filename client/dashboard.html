@@ -1,47 +1,308 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Slateboard Dashboard</title>
+    <title>Dashboard — Slateboard</title>
+    <meta name="description" content="Manage your Slateboard whiteboards, create new ones, and collaborate in real-time." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./css/tokens.css" />
     <link rel="stylesheet" href="./css/base.css" />
     <link rel="stylesheet" href="./css/components.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-  </head>
-  <body class="dashboard-body">
-    <main class="dashboard-shell">
-      <header class="dashboard-head card">
-        <div>
-          <p class="eyebrow">Phase 2</p>
-          <h1>Your Boards</h1>
-        </div>
-        <div class="dashboard-head-actions">
-          <span class="status-badge" id="dashboard-user">Loading...</span>
-          <button class="btn btn-secondary" id="logout-button" type="button">Logout</button>
-          <button class="btn btn-accent" id="new-board-button" type="button">New board</button>
-        </div>
-      </header>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-      <section class="dashboard-grid" id="boards-grid"></section>
-      <p class="dashboard-empty card" id="dashboard-empty" hidden>No boards yet. Create the first one.</p>
-    </main>
+    <style>
+      :root {
+        --color-canvas: #fffdf5;
+        --color-accent: #ff6b6b;
+        --color-secondary: #ffd93d;
+        --color-muted: #c4b5fd;
+        --color-ink: #000000;
+        --color-white: #ffffff;
+        --color-sea: #2ec4b6;
+        --border-heavy: 4px solid var(--color-ink);
+        --shadow-hard: 8px 8px 0 var(--color-ink);
+        --shadow-hard-lg: 12px 12px 0 var(--color-ink);
+      }
+
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0; padding: 0;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 700;
+        background: var(--color-canvas);
+        background-image: linear-gradient(to right,rgba(0,0,0,.07) 1px,transparent 1px),linear-gradient(to bottom,rgba(0,0,0,.07) 1px,transparent 1px);
+        background-size: 32px 32px;
+        color: var(--color-ink);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* NAV */
+      .dash-nav {
+        position: sticky; top: 0; z-index: 100;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 1rem 2rem;
+        background: var(--color-canvas);
+        border-bottom: var(--border-heavy);
+        box-shadow: 0 4px 0 var(--color-ink);
+        background-image: linear-gradient(to right,rgba(0,0,0,.06) 1px,transparent 1px),linear-gradient(to bottom,rgba(0,0,0,.06) 1px,transparent 1px);
+        background-size: 32px 32px;
+      }
+      .dash-nav-logo { display:flex; align-items:center; gap:.75rem; text-decoration:none; }
+      .dash-nav-badge {
+        padding:.3rem .8rem; background:var(--color-secondary);
+        border:var(--border-heavy); box-shadow:4px 4px 0 var(--color-ink);
+        font-size:.9rem; font-weight:900; text-transform:uppercase; letter-spacing:.05em;
+      }
+      .dash-nav-right { display:flex; align-items:center; gap:.75rem; }
+      .dash-user-chip {
+        display:flex; align-items:center; gap:.5rem;
+        padding:.35rem .85rem; border:var(--border-heavy);
+        background:var(--color-white); box-shadow:4px 4px 0 var(--color-ink);
+        font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+      }
+      .dash-btn {
+        display:inline-flex; align-items:center; gap:.4rem;
+        padding:.5rem 1.1rem; border:var(--border-heavy); box-shadow:var(--shadow-hard);
+        font-size:.78rem; font-weight:900; text-transform:uppercase; letter-spacing:.06em;
+        cursor:pointer; font-family:inherit; transition:transform .12s, box-shadow .12s;
+      }
+      .dash-btn:hover { transform:translate(-2px,-2px); box-shadow:var(--shadow-hard-lg); }
+      .dash-btn:active { transform:translate(4px,4px); box-shadow:none; }
+      .dash-btn--primary { background:var(--color-accent); color:var(--color-ink); }
+      .dash-btn--ghost   { background:var(--color-white); color:var(--color-ink); }
+      .dash-btn--danger  { background:#fee2e2; color:#991b1b; }
+
+      /* HERO HEADER */
+      .dash-hero {
+        max-width:1400px; margin:0 auto; padding:3rem 2rem 1.5rem;
+        display:flex; align-items:flex-end; justify-content:space-between; gap:2rem; flex-wrap:wrap;
+      }
+      .dash-hero-eyebrow {
+        display:inline-flex; align-items:center; gap:.5rem;
+        padding:.25rem .7rem; background:var(--color-ink); color:var(--color-secondary);
+        font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.14em;
+        margin-bottom:1rem;
+      }
+      .dash-hero-title {
+        font-size:clamp(2.5rem,6vw,4.5rem); font-weight:900;
+        text-transform:uppercase; line-height:.9; margin:0 0 .5rem;
+      }
+      .dash-hero-title span { color:var(--color-accent); }
+      .dash-hero-sub { font-family:'Space Mono',monospace; font-size:.85rem; opacity:.6; margin:0; }
+      .dash-hero-stats { display:flex; gap:2rem; flex-wrap:wrap; }
+      .dash-stat {
+        padding:1rem 1.5rem; background:var(--color-white);
+        border:var(--border-heavy); box-shadow:var(--shadow-hard);
+        display:flex; flex-direction:column; gap:.2rem;
+      }
+      .dash-stat-num { font-size:2rem; font-weight:900; line-height:1; }
+      .dash-stat-label { font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; opacity:.5; }
+
+      /* SECTION */
+      .dash-section { max-width:1400px; margin:0 auto; padding:2rem; }
+      .dash-section-hd {
+        display:flex; align-items:center; justify-content:space-between;
+        margin-bottom:1.5rem; padding-bottom:1rem;
+        border-bottom:var(--border-heavy);
+      }
+      .dash-section-title { font-size:1rem; font-weight:900; text-transform:uppercase; letter-spacing:.06em; margin:0; }
+      .dash-section-meta { font-size:.72rem; font-family:'Space Mono',monospace; opacity:.5; }
+
+      /* BOARD GRID */
+      .dash-grid {
+        display:grid;
+        grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+        gap:1.5rem;
+      }
+      .dash-card {
+        background:var(--color-white); border:var(--border-heavy); box-shadow:var(--shadow-hard);
+        display:flex; flex-direction:column; position:relative; overflow:hidden;
+        transition:transform .15s, box-shadow .15s; cursor:default;
+      }
+      .dash-card:hover { transform:translate(-4px,-4px); box-shadow:var(--shadow-hard-lg); }
+      .dash-card-accent { height:6px; flex-shrink:0; }
+      .dash-card-body { padding:1.25rem 1.25rem .75rem; flex:1; }
+      .dash-card-key { font-size:.62rem; font-family:'Space Mono',monospace; opacity:.45; margin:0 0 .35rem; text-transform:uppercase; letter-spacing:.1em; }
+      .dash-card-title { font-size:1.05rem; font-weight:900; text-transform:uppercase; margin:0 0 .5rem; line-height:1.1; }
+      .dash-card-meta { font-size:.68rem; font-family:'Space Mono',monospace; opacity:.45; margin:0; }
+      .dash-card-footer {
+        display:flex; align-items:center; justify-content:space-between;
+        padding:.75rem 1.25rem; border-top:2px solid var(--color-ink);
+        background:var(--color-canvas);
+      }
+      .dash-open-btn {
+        display:inline-flex; align-items:center; gap:.4rem;
+        padding:.4rem .9rem; background:var(--color-accent);
+        border:2px solid var(--color-ink); box-shadow:3px 3px 0 var(--color-ink);
+        font-size:.72rem; font-weight:900; text-transform:uppercase; letter-spacing:.06em;
+        color:var(--color-ink); text-decoration:none;
+        transition:transform .1s, box-shadow .1s;
+      }
+      .dash-open-btn:hover { transform:translate(-2px,-2px); box-shadow:5px 5px 0 var(--color-ink); }
+      .dash-open-btn:active { transform:translate(2px,2px); box-shadow:none; }
+      .dash-delete-btn {
+        background:none; border:2px solid transparent; padding:.35rem .6rem;
+        cursor:pointer; font-size:.85rem; opacity:.4; transition:opacity .1s, border-color .1s;
+        color:var(--color-ink);
+      }
+      .dash-delete-btn:hover { opacity:1; border-color:var(--color-accent); background:rgba(255,107,107,.1); }
+
+      /* EMPTY STATE */
+      .dash-empty {
+        grid-column:1/-1; padding:4rem 2rem; text-align:center;
+        border:4px dashed rgba(0,0,0,.2); background:var(--color-white);
+      }
+      .dash-empty-icon { font-size:3rem; opacity:.2; margin-bottom:1rem; }
+      .dash-empty-title { font-size:1.2rem; font-weight:900; text-transform:uppercase; margin:0 0 .5rem; }
+      .dash-empty-sub { font-family:'Space Mono',monospace; font-size:.8rem; opacity:.5; }
+
+      /* LOAD MORE */
+      .dash-load-more-wrap { display:flex; justify-content:center; padding:2rem 0 0; }
+
+      /* JOIN BOARD FORM */
+      .dash-join-wrap {
+        max-width:1400px; margin:0 auto; padding:0 2rem 3rem;
+      }
+      .dash-join-card {
+        background:var(--color-ink); padding:2rem;
+        border:var(--border-heavy); box-shadow:var(--shadow-hard);
+        display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;
+      }
+      .dash-join-title { font-size:1.1rem; font-weight:900; text-transform:uppercase; color:var(--color-canvas); white-space:nowrap; }
+      .dash-join-form { display:flex; gap:.75rem; flex:1; min-width:220px; }
+      .dash-join-input {
+        flex:1; padding:.65rem 1rem; border:3px solid rgba(255,255,255,.3);
+        background:rgba(255,255,255,.08); color:var(--color-canvas);
+        font-family:'Space Mono',monospace; font-size:.85rem; font-weight:700;
+        text-transform:uppercase; letter-spacing:.08em;
+        transition:border-color .12s, background .12s;
+      }
+      .dash-join-input::placeholder { opacity:.4; }
+      .dash-join-input:focus { outline:none; border-color:var(--color-secondary); background:rgba(255,217,61,.1); }
+      .dash-join-btn {
+        padding:.65rem 1.5rem; background:var(--color-secondary); border:3px solid var(--color-secondary);
+        font-size:.8rem; font-weight:900; text-transform:uppercase; letter-spacing:.06em;
+        cursor:pointer; font-family:inherit; transition:transform .1s, box-shadow .1s;
+        color:var(--color-ink);
+      }
+      .dash-join-btn:hover { transform:translate(-2px,-2px); box-shadow:4px 4px 0 rgba(255,255,255,.3); }
+
+      /* GITHUB FLOAT */
+      .github-float-btn {
+        position:fixed; bottom:1.5rem; right:1.5rem; z-index:999;
+        display:flex; align-items:center; justify-content:center;
+        width:3rem; height:3rem;
+        background:var(--color-ink); color:var(--color-canvas);
+        border:var(--border-heavy); box-shadow:var(--shadow-hard);
+        font-size:1.2rem; text-decoration:none;
+        transition:transform .12s, box-shadow .12s;
+      }
+      .github-float-btn:hover { transform:translate(-3px,-3px); box-shadow:var(--shadow-hard-lg); }
+
+      @media (max-width:720px) {
+        .dash-hero { padding:2rem 1rem 1rem; }
+        .dash-section { padding:1rem; }
+        .dash-join-wrap { padding:0 1rem 2rem; }
+        .dash-nav { padding:.75rem 1rem; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- NAV -->
+    <nav class="dash-nav">
+      <a class="dash-nav-logo" href="./index.html" aria-label="Slateboard home">
+        <div class="dash-nav-badge">Slateboard</div>
+        <span style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.5;">Dashboard</span>
+      </a>
+      <div class="dash-nav-right">
+        <div class="dash-user-chip"><i class="fa-solid fa-user"></i><span id="dashboard-user">Loading...</span></div>
+        <button class="dash-btn dash-btn--ghost" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <button class="dash-btn dash-btn--ghost" id="logout-button" type="button">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+        <button class="dash-btn dash-btn--primary" id="new-board-button" type="button">
+          <i class="fa-solid fa-plus"></i> New Board
+        </button>
+      </div>
+    </nav>
+
+    <!-- HERO HEADER -->
+    <div class="dash-hero">
+      <div>
+        <div class="dash-hero-eyebrow"><i class="fa-solid fa-layer-group"></i> My Workspace</div>
+        <h1 class="dash-hero-title">Your <span>Boards</span></h1>
+        <p class="dash-hero-sub">Create, share, and collaborate in real-time.</p>
+      </div>
+      <div class="dash-hero-stats">
+        <div class="dash-stat">
+          <span class="dash-stat-num" id="total-boards-count">—</span>
+          <span class="dash-stat-label">Total boards</span>
+        </div>
+        <div class="dash-stat">
+          <span class="dash-stat-num" id="recent-boards-count">—</span>
+          <span class="dash-stat-label">Recent (7d)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT BOARDS -->
+    <section class="dash-section" id="recent-boards">
+      <div class="dash-section-hd">
+        <h2 class="dash-section-title"><i class="fa-solid fa-clock-rotate-left"></i> Recently Updated</h2>
+      </div>
+      <div class="dash-grid" id="recent-grid"></div>
+    </section>
+
+    <!-- ALL BOARDS -->
+    <section class="dash-section">
+      <div class="dash-section-hd">
+        <h2 class="dash-section-title"><i class="fa-solid fa-border-all"></i> All Boards</h2>
+        <span class="dash-section-meta" id="boards-meta"></span>
+      </div>
+      <div class="dash-grid" id="boards-grid"></div>
+      <p class="dash-empty" id="dashboard-empty" hidden>
+        <span class="dash-empty-icon"><i class="fa-solid fa-chalkboard"></i></span>
+        <span class="dash-empty-title">No boards yet</span>
+        <span class="dash-empty-sub">Hit "New Board" to create your first one.</span>
+      </p>
+      <div class="dash-load-more-wrap">
+        <button class="dash-btn dash-btn--ghost" id="load-more-button" type="button" hidden>
+          <i class="fa-solid fa-chevron-down"></i> Load more
+        </button>
+      </div>
+    </section>
+
+    <!-- JOIN BOARD -->
+    <div class="dash-join-wrap">
+      <div class="dash-join-card">
+        <span class="dash-join-title"><i class="fa-solid fa-link"></i> Join a board</span>
+        <div class="dash-join-form">
+          <input class="dash-join-input" id="join-room-key" type="text" placeholder="Enter room key e.g. SLATE-AB12" autocomplete="off" maxlength="20" />
+          <button class="dash-join-btn" id="join-board-button" type="button">Join</button>
+        </div>
+      </div>
+    </div>
 
     <script defer src="./js/dashboard.js"></script>
+    <script>
+      // Join board inline handler
+      document.getElementById("join-board-button").addEventListener("click", function () {
+        const key = document.getElementById("join-room-key").value.trim().toUpperCase();
+        if (key) window.location.href = "./board.html?roomKey=" + encodeURIComponent(key);
+      });
+      document.getElementById("join-room-key").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") document.getElementById("join-board-button").click();
+      });
+    </script>
 
-    <a href="https://github.com/priyanshukamal26/slateboard" target="_blank" rel="noopener noreferrer" class="github-float-btn" aria-label="View original GitHub repository" title="GitHub Repository">
+    <a href="https://github.com/priyanshukamal26/slateboard" target="_blank" rel="noopener noreferrer" class="github-float-btn" aria-label="GitHub repository" title="GitHub">
       <i class="fa-brands fa-github"></i>
     </a>
   </body>

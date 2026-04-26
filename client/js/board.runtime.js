@@ -185,6 +185,34 @@
     ctx.restore();
   }
 
+  function drawImage(ctx, stroke, cache, engine) {
+    if (!stroke.image || stroke.points.length < 2) return;
+
+    let img = cache.get(stroke.image);
+    if (!img) {
+      img = new Image();
+      img.src = stroke.image;
+      img.onload = function () {
+        if (engine) engine.requestRender();
+      };
+      cache.set(stroke.image, img);
+    }
+
+    if (!img.complete || img.naturalWidth === 0) return;
+
+    const start = stroke.points[0];
+    const end = stroke.points[stroke.points.length - 1];
+    const x = Math.min(start.x, end.x);
+    const y = Math.min(start.y, end.y);
+    const w = Math.abs(end.x - start.x);
+    const h = Math.abs(end.y - start.y);
+
+    ctx.save();
+    ctx.globalAlpha = stroke.style.opacity;
+    ctx.drawImage(img, x, y, w, h);
+    ctx.restore();
+  }
+
   function drawSmoothPen(ctx, stroke, blendMode) {
     if (!stroke || stroke.points.length === 0) {
       return;
@@ -741,6 +769,13 @@
       cursor: "crosshair",
       mode: "laser",
     },
+    image: {
+      button: "Image",
+      title: "Image import",
+      help: "Click the tool to select and import an image. Use Select tool to resize.",
+      cursor: "pointer",
+      mode: "image",
+    },
   };
 
   function CanvasEngine() {
@@ -749,6 +784,7 @@
     this.ctx = this.canvas.getContext("2d");
     this.saveStatus = document.getElementById("save-status");
     this.boardModeLabel = document.getElementById("board-mode-label");
+    this.boardOwnerLabel = document.getElementById("board-owner-label");
     this.roomKeyLabel = document.getElementById("room-key");
     this.zoomIndicator = document.getElementById("zoom-indicator");
     this.widthInput = document.getElementById("stroke-width");
@@ -803,6 +839,8 @@
     this.inlineTextEditor = document.getElementById("inline-text-editor");
     this.shortcutsModal = document.getElementById("shortcuts-modal");
     this.shortcutsClose = document.getElementById("shortcuts-close");
+    this.imageInput = document.getElementById("image-input");
+    this.imageCache = new Map();
     this.toolButtons = Array.prototype.slice.call(document.querySelectorAll("[data-tool]"));
     this.swatches = Array.prototype.slice.call(document.querySelectorAll(".swatch"));
     this.backgroundButtons = Array.prototype.slice.call(document.querySelectorAll("[data-background]"));
@@ -896,7 +934,9 @@
     this.shareUrl.value = this.roomKey ? window.location.origin + "/board.html?roomKey=" + this.roomKey : "";
 
     try {
-      const response = await fetch("/api/auth/me", { credentials: "include" });
+      const token = localStorage.getItem("slateboard.token") || "";
+      const headers = token ? { Authorization: "Bearer " + token } : {};
+      const response = await fetch("/api/auth/me", { credentials: "include", headers });
       if (response.ok) {
         const payload = await response.json();
         this.sessionUser = payload.user;
@@ -907,10 +947,12 @@
         if (refreshResponse.ok) {
           const refreshPayload = await refreshResponse.json();
           this.sessionToken = refreshPayload.token || "";
+          window.__slateToken = this.sessionToken; // Set global token for Chat/AI
         }
       }
     } catch (error) {
       this.sessionUser = null;
+      window.__slateToken = "";
     }
 
     if (!this.roomKey || typeof window.io !== "function") {
@@ -989,9 +1031,16 @@
         engine.setExportOpen(false);
         engine.setShareOpen(false);
         engine.setPropertiesOpen(
-          button.dataset.tool !== "pan" && button.dataset.tool !== "laser" && button.dataset.tool !== "select",
+          button.dataset.tool !== "pan" && button.dataset.tool !== "laser" && button.dataset.tool !== "select" && button.dataset.tool !== "image",
         );
+        if (button.dataset.tool === "image") {
+          engine.imageInput.click();
+        }
       });
+    });
+
+    this.imageInput.addEventListener("change", function (e) {
+      engine.handleImageSelect(e);
     });
 
     this.widthInput.addEventListener("input", function () {
@@ -1138,6 +1187,8 @@
     });
 
     window.addEventListener("keydown", function (event) {
+      if (event.target && ["INPUT", "TEXTAREA"].includes(event.target.tagName)) return;
+
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") {
         event.preventDefault();
         if (event.shiftKey) {
@@ -1501,6 +1552,44 @@
     document.body.focus();
   };
 
+  CanvasEngine.prototype.handleImageSelect = function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const engine = this;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const dataUrl = e.target.result;
+      const img = new Image();
+      img.onload = function () {
+        const centerWorldX = engine.screenToWorldX(engine.viewport.width / 2);
+        const centerWorldY = engine.screenToWorldY(engine.viewport.height / 2);
+
+        const maxWidth = (engine.viewport.width * 0.4) / engine.camera.zoom;
+        const scale = Math.min(1, maxWidth / img.naturalWidth);
+        const w = img.naturalWidth * scale;
+        const h = img.naturalHeight * scale;
+
+        const stroke = createStroke("image", engine.currentStyle);
+        stroke.image = dataUrl;
+        stroke.dimensions = { width: img.naturalWidth, height: img.naturalHeight };
+        stroke.points = [
+          { x: centerWorldX - w / 2, y: centerWorldY - h / 2 },
+          { x: centerWorldX + w / 2, y: centerWorldY + h / 2 },
+        ];
+
+        engine.history.execute(createAddStrokeCommand(stroke));
+        engine.afterStateChange();
+        engine.imageInput.value = "";
+        engine.selectTool("select");
+        engine.selectionIds = [stroke.id];
+        engine.selectionBounds = engine.getSelectionBounds();
+      };
+      img.src = dataUrl;
+    };
+    reader.readAsDataURL(file);
+  };
+
   CanvasEngine.prototype.startTouchGesture = function (touches) {
     const first = touches[0];
     const second = touches[1];
@@ -1566,6 +1655,14 @@
     if (stroke.tool === "text") {
       maxX = minX + Math.max((stroke.text || "").length * (stroke.style.textSize || 24) * 0.62, 20);
       maxY = minY + Math.max((stroke.style.textSize || 24) * 1.25, 20);
+    }
+    if (stroke.tool === "image") {
+      const start = stroke.points[0];
+      const end = stroke.points[stroke.points.length - 1];
+      minX = Math.min(start.x, end.x);
+      minY = Math.min(start.y, end.y);
+      maxX = Math.max(start.x, end.x);
+      maxY = Math.max(start.y, end.y);
     }
 
     return {
@@ -2119,6 +2216,11 @@
         parts.push('<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + Math.abs(end.x - start.x) / 2 + '" ry="' +
           Math.abs(end.y - start.y) / 2 + '" fill="' + (stroke.style.fill ? stroke.style.color : "none") + '" fill-opacity="' +
           stroke.style.opacity + '" stroke="' + stroke.style.color + '" stroke-width="' + stroke.style.width + '"' + dashAttr + '/>');
+      } else if (stroke.tool === "image") {
+        const start = stroke.points[0];
+        const end = stroke.points[stroke.points.length - 1];
+        parts.push('<image href="' + stroke.image + '" x="' + Math.min(start.x, end.x) + '" y="' + Math.min(start.y, end.y) + '" width="' +
+          Math.abs(end.x - start.x) + '" height="' + Math.abs(end.y - start.y) + '" opacity="' + stroke.style.opacity + '"/>');
       } else {
         const path = stroke.points.map(function (point, index) {
           return (index === 0 ? "M" : "L") + point.x + " " + point.y;
@@ -2388,22 +2490,38 @@
       return;
     }
 
+    const selfId = this.sessionActorId();
     for (let i = 0; i < collaborators.length; i += 1) {
       const person = collaborators[i];
-      const presence = document.createElement("div");
-      presence.className = "presence-chip";
-      presence.title = person.displayName + " • " + person.role;
-      presence.innerHTML =
-        '<span class="presence-dot" style="--presence-color:' + person.color + '"></span>' +
-        '<span>' + (person.role === "owner" ? "Crown " : "") + person.displayName + '</span>';
-      this.presenceStrip.appendChild(presence);
+      
+      // Only show peer chips in the top presence strip
+      if (person.id !== selfId) {
+        let nameToDisplay = person.displayName;
+        if (person.role === "owner" && nameToDisplay === "Guest") {
+          nameToDisplay = "Owner";
+        }
+
+        const presence = document.createElement("div");
+        presence.className = "presence-chip";
+        presence.title = nameToDisplay + " • " + person.role;
+        presence.innerHTML =
+          '<span class="presence-dot" style="--presence-color:' + person.color + '"></span>' +
+          '<span>' + nameToDisplay + '</span>';
+        this.presenceStrip.appendChild(presence);
+      }
 
       const row = document.createElement("div");
       row.className = "collaborator-row";
       const canEditRole = this.userRole === "owner" && person.id !== this.sessionActorId();
+      
+      let listName = person.displayName;
+      if (person.role === "owner" && listName === "Guest") {
+        listName = "Owner";
+      }
+
       row.innerHTML =
         '<div class="collaborator-meta">' +
-        '<span class="collaborator-name">' + person.displayName + '</span>' +
+        '<span class="collaborator-name">' + listName + '</span>' +
         '<span class="collaborator-subline">' + person.role + (person.guest ? " • guest" : "") + "</span>" +
         "</div>";
 
@@ -2473,6 +2591,15 @@
         return deepClone(stroke);
       });
       engine.collaborators = payload.collaborators || [];
+      
+      const owner = engine.collaborators.find(function(c) { return c.role === 'owner'; });
+      if (owner) {
+        engine.boardOwnerLabel.textContent = "Owned by " + owner.displayName;
+        engine.boardOwnerLabel.hidden = false;
+      } else {
+        engine.boardOwnerLabel.hidden = true;
+      }
+
       engine.renderCollaborators();
       engine.requestRender();
     });
@@ -2927,6 +3054,8 @@
       drawArrow(this.ctx, stroke);
     } else if (stroke.tool === "text") {
       drawText(this.ctx, stroke);
+    } else if (stroke.tool === "image") {
+      drawImage(this.ctx, stroke, this.imageCache, this);
     } else if (stroke.tool === "eraser") {
       drawPathStroke(this.ctx, stroke, "destination-out");
     }
@@ -2957,7 +3086,12 @@
 
   window.addEventListener("load", function () {
     const engine = new CanvasEngine();
-    engine.init().catch(function () {
+    engine.init().then(function() {
+      // Initialize external panel controllers (they bind their own UI elements)
+      if (window.ChatController)   engine.chatController   = new window.ChatController(engine.socket, engine.roomKey, engine.sessionUser);
+      if (window.AiController)     engine.aiController     = new window.AiController(engine);
+      if (window.ReplayController) engine.replayController = new window.ReplayController(engine);
+    }).catch(function () {
       engine.setSaveStatus("Init failed");
     });
   });

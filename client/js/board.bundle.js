@@ -20,19 +20,19 @@
     return {
       x:
         0.5 *
-        ((2 * p1.x) +
+        (2 * p1.x +
           (-p0.x + p2.x) * t +
           (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
           (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3),
       y:
         0.5 *
-        ((2 * p1.y) +
+        (2 * p1.y +
           (-p0.y + p2.y) * t +
           (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 +
           (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3),
       pressure:
         0.5 *
-        ((2 * p1.pressure) +
+        (2 * p1.pressure +
           (-p0.pressure + p2.pressure) * t +
           (2 * p0.pressure - 5 * p1.pressure + 4 * p2.pressure - p3.pressure) * t2 +
           (-p0.pressure + 3 * p1.pressure - 3 * p2.pressure + p3.pressure) * t3),
@@ -57,7 +57,7 @@
         (last.y - first.y) * point.x -
           (last.x - first.x) * point.y +
           last.x * first.y -
-          last.y * first.x,
+          last.y * first.x
       );
       const perpendicular = numerator / baseLength;
 
@@ -88,7 +88,8 @@
 
   function createStroke(tool, style) {
     return {
-      id: window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID() : String(Date.now()),
+      id:
+        window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID() : String(Date.now()),
       tool: tool,
       style: {
         color: style.color,
@@ -137,7 +138,7 @@
         y: point.y,
         pressure: pressure,
         t: timestamp,
-      }),
+      })
     );
   }
 
@@ -177,7 +178,10 @@
       for (let step = 1; step <= samples; step += 1) {
         const t = step / samples;
         const current = interpolatePoint(p0, p1, p2, p3, t);
-        const width = Math.max(stroke.style.width * ((previous.pressure + current.pressure) / 2), 0.75);
+        const width = Math.max(
+          stroke.style.width * ((previous.pressure + current.pressure) / 2),
+          0.75
+        );
         const angle = Math.atan2(current.y - previous.y, current.x - previous.x);
         const normalX = Math.cos(angle + Math.PI / 2) * width * 0.5;
         const normalY = Math.sin(angle + Math.PI / 2) * width * 0.5;
@@ -594,7 +598,9 @@
     this.toolHelp = document.getElementById("tool-help");
     this.toolButtons = Array.prototype.slice.call(document.querySelectorAll("[data-tool]"));
     this.swatches = Array.prototype.slice.call(document.querySelectorAll(".swatch"));
-    this.backgroundButtons = Array.prototype.slice.call(document.querySelectorAll("[data-background]"));
+    this.backgroundButtons = Array.prototype.slice.call(
+      document.querySelectorAll("[data-background]")
+    );
 
     this.dpr = Math.max(window.devicePixelRatio || 1, 1);
     this.viewport = { width: window.innerWidth, height: window.innerHeight };
@@ -621,7 +627,7 @@
     };
     this.scheduleSave = this.boardStore.createSaver(
       this.createSnapshot.bind(this),
-      this.setSaveStatus.bind(this),
+      this.setSaveStatus.bind(this)
     );
   }
 
@@ -759,26 +765,30 @@
       }
     });
 
-    this.canvas.addEventListener("wheel", function (event) {
-      if (!event.ctrlKey) {
-        return;
-      }
+    this.canvas.addEventListener(
+      "wheel",
+      function (event) {
+        if (!event.ctrlKey) {
+          return;
+        }
 
-      event.preventDefault();
+        event.preventDefault();
 
-      const rect = engine.canvas.getBoundingClientRect();
-      const screenX = event.clientX - rect.left;
-      const screenY = event.clientY - rect.top;
-      const worldX = engine.screenToWorldX(screenX);
-      const worldY = engine.screenToWorldY(screenY);
-      const factor = event.deltaY < 0 ? 1.08 : 0.92;
-      const nextZoom = clamp(engine.camera.zoom * factor, 0.25, 4);
-      engine.camera.x = screenX - worldX * nextZoom;
-      engine.camera.y = screenY - worldY * nextZoom;
-      engine.camera.zoom = nextZoom;
-      engine.zoomIndicator.textContent = Math.round(nextZoom * 100) + "%";
-      engine.afterStateChange();
-    }, { passive: false });
+        const rect = engine.canvas.getBoundingClientRect();
+        const screenX = event.clientX - rect.left;
+        const screenY = event.clientY - rect.top;
+        const worldX = engine.screenToWorldX(screenX);
+        const worldY = engine.screenToWorldY(screenY);
+        const factor = event.deltaY < 0 ? 1.08 : 0.92;
+        const nextZoom = clamp(engine.camera.zoom * factor, 0.25, 4);
+        engine.camera.x = screenX - worldX * nextZoom;
+        engine.camera.y = screenY - worldY * nextZoom;
+        engine.camera.zoom = nextZoom;
+        engine.zoomIndicator.textContent = Math.round(nextZoom * 100) + "%";
+        engine.afterStateChange();
+      },
+      { passive: false }
+    );
 
     this.canvas.addEventListener("pointerdown", function (event) {
       if (event.button === 1 || engine.spacePressed) {
@@ -977,7 +987,7 @@
     this.backgroundButtons.forEach(
       function (button) {
         button.classList.toggle("is-active", button.dataset.background === this.background);
-      }.bind(this),
+      }.bind(this)
     );
     this.requestRender();
   };

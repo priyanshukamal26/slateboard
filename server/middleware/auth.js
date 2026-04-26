@@ -1,17 +1,22 @@
-const { users } = require("../data/store");
+const User = require("../models/User");
 const { verifyToken } = require("../utils/auth");
 
 async function requireAuth(req, res, next) {
   try {
-    const rawToken = req.session.token || String(req.headers.authorization || "").replace(/^Bearer\s+/i, "");
+    const rawToken =
+      req.session.token || String(req.headers.authorization || "").replace(/^Bearer\s+/i, "");
     const payload = rawToken ? verifyToken(rawToken) : null;
 
-    if (!payload || !users.has(payload.sub)) {
-      res.status(401).json({ message: "Unauthorized." });
-      return;
+    if (!payload) {
+      return res.status(401).json({ message: "Unauthorized." });
     }
 
-    req.user = users.get(payload.sub);
+    const user = await User.findById(payload.sub).lean();
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized." });
+    }
+
+    req.user = user;
     next();
   } catch (error) {
     res.status(401).json({ message: "Unauthorized." });

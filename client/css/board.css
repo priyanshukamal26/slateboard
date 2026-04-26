@@ -42,9 +42,16 @@
 
 .topbar-left {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-3);
   flex-shrink: 0;
+}
+
+.logo-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: flex-start;
 }
 
 /* ── Logo ───────────────────────────────────────────────── */
@@ -306,6 +313,20 @@
   width: 2.75rem;
   min-height: 2.75rem;
   padding: 0;
+}
+
+.topbar-action-btn--compact {
+  min-height: 2.25rem;
+  height: 2.25rem;
+  padding: 0 var(--space-3);
+  font-size: var(--font-size-xs);
+  box-shadow: 4px 4px 0 var(--color-ink);
+  text-decoration: none;
+}
+
+.topbar-action-btn--compact:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -1283,3 +1304,197 @@ kbd {
     animation: none !important;
   }
 }
+
+/* ─────────────────────────────────────────────────────────
+   CHAT MESSAGE BUBBLES
+───────────────────────────────────────────────────────── */
+.chat-msg {
+  background: var(--color-white);
+  color: var(--color-ink);
+  border: 2px solid var(--color-ink);
+  box-shadow: 2px 2px 0px var(--color-ink);
+  padding: 10px 14px;
+  margin-bottom: 4px;
+  border-radius: 0;
+  align-self: flex-start;
+  max-width: 90%;
+  word-wrap: break-word;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.chat-msg--self {
+  background: var(--color-sea);
+  color: var(--color-white);
+  align-self: flex-end;
+}
+
+.chat-msg-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+.chat-msg-name {
+  text-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+}
+
+.chat-msg-time {
+  opacity: 0.8;
+  font-size: 0.75rem;
+}
+
+.chat-msg-text {
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+/* ─────────────────────────────────────────────────────────
+   RESPONSIVE DESIGN (Canvas & UI)
+───────────────────────────────────────────────────────── */
+
+@media (max-width: 1024px) {
+  .mode-label, .save-label {
+    display: none;
+  }
+  
+  .topbar-left, .topbar-center, .topbar-right {
+    gap: var(--space-2);
+  }
+
+  .presence-strip {
+    max-width: 8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .topbar-left {
+    flex: 1;
+  }
+
+  .board-status {
+    display: none;
+  }
+
+  .logo-mark {
+    height: 2.75rem;
+    font-size: 1.1rem;
+    padding: 0 var(--space-3);
+  }
+
+  .topbar-action-btn span {
+    display: none; /* Hide text on mobile */
+  }
+
+  .topbar-action-btn {
+    padding: 0;
+    width: 2.75rem;
+    min-width: 2.75rem;
+  }
+
+  /* Move toolbar to bottom */
+  .topbar-center {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 110;
+  }
+
+  .toolbar-strip {
+    box-shadow: 0 8px 0 var(--color-ink); /* Heavier shadow for bottom floating */
+    max-width: 90vw;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: var(--space-1) var(--space-2);
+  }
+
+  /* Compact tool buttons for mobile */
+  .tool-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 0.85rem;
+  }
+
+  .tool-sep {
+    height: 2rem;
+  }
+
+  .presence-strip {
+    display: none; /* Hide presence on very small screens to avoid clutter */
+  }
+
+  /* Properties panel adjustments */
+  .properties-panel {
+    bottom: 85px !important;
+    left: 10px !important;
+    top: auto !important;
+    width: calc(100vw - 20px);
+    max-height: 40vh;
+    overflow-y: auto;
+  }
+  
+  .float-panel {
+    width: calc(100vw - 20px);
+    right: 10px !important;
+    left: 10px !important;
+    top: 70px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-mark span {
+    display: none;
+  }
+  .logo-mark::before {
+    content: 'S';
+  }
+}
+
+/* ─────────────────────────────────────────────────────────
+   DASH BUTTONS
+───────────────────────────────────────────────────────── */
+.dash-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.8rem;
+  padding: 0 16px;
+  background: var(--color-white);
+  border: var(--border-heavy);
+  box-shadow: 4px 4px 0 var(--color-ink);
+  color: var(--color-ink);
+  font-weight: var(--font-weight-black);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.1s steps(2), box-shadow 0.1s steps(2);
+}
+
+.dash-btn:hover {
+  background: var(--color-secondary);
+}
+
+.dash-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--color-ink);
+}
+
+.dash-btn--accent {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.dash-btn--accent:hover {
+  background: var(--color-ink);
+}
+

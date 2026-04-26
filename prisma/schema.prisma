@@ -1,0 +1,54 @@
+// This is your Prisma schema file — covers Unit V (PostgreSQL + Prisma ORM)
+// After setting DATABASE_URL in .env, run: npx prisma migrate dev --name init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Tracks all user actions (who did what and when)
+model ActivityLog {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  action    String   // "join", "stroke", "export", "login", "create-board"
+  boardId   String?
+  metadata  String?  // JSON string
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([boardId])
+  @@index([createdAt])
+}
+
+// Detailed audit trail (who drew/deleted/moved what)
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  boardId   String
+  strokeId  String?
+  action    String   // "draw", "delete", "move"
+  before    String?  // JSON string of state before
+  after     String?  // JSON string of state after
+  timestamp DateTime @default(now())
+
+  @@index([boardId])
+  @@index([userId])
+  @@index([timestamp])
+}
+
+// Session tracking (join/leave times per board)
+model SessionLog {
+  id       Int       @id @default(autoincrement())
+  userId   String
+  ip       String
+  boardId  String?
+  joinedAt DateTime  @default(now())
+  leftAt   DateTime?
+
+  @@index([userId])
+  @@index([boardId])
+}

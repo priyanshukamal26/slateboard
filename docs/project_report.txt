@@ -1,0 +1,93 @@
+SLATEBOARD: COMPREHENSIVE TECHNICAL PROJECT ANALYSIS (BUILD v0.2.0)
+================================================================
+
+1. PROJECT IDENTITY & SCOPE
+---------------------------
+Slateboard is a high-fidelity, real-time collaborative whiteboard platform. It enables multi-user vector drawing with sub-millisecond synchronization, enterprise-grade auditing, and AI-powered academic assistance. The project is built as a modular monolith using a hybrid data persistence strategy.
+
+2. MACRO-TECH STACK
+-------------------
+- Runtime Environment: Node.js (v18+).
+- Web Framework: Express.js (CommonJS).
+- Real-Time Protocol: Socket.io (WebSocket with HTTP long-polling fallback).
+- Persistence (Hybrid):
+  * MongoDB (via Mongoose): Main application state (Boards, Strokes, Users, Invites, History).
+  * PostgreSQL (via Prisma ORM): Structured logging, audit trails, and session metrics.
+- AI Integration: Groq SDK (Llama-3.1-8b-instant) for academic-focused conversational AI.
+
+3. ARCHITECTURAL MICRO-DETAILS
+------------------------------
+A. Custom Drawing Engine (The Canvas Logic)
+The frontend utilizes a custom-built rendering pipeline within `client/js/canvas/`:
+- Spline Interpolation: Implements Catmull-Rom Splines to transform jagged raw input points into smooth, continuous curves.
+- Path Simplification: Uses the Ramer-Douglas-Peucker (RDP) algorithm to prune redundant vector points, maintaining shape integrity while reducing payload size (capped at 500 points per stroke).
+- Dynamic Segment Rendering: Instead of basic lines, the engine renders filled quadrilaterals between points. This allows for variable-width segments based on simulated pressure.
+- Pressure Simulation: Calculates "simulated pressure" using an inverse velocity algorithm: `pressure = clamp(1.35 - velocity * 0.18, 0.2, 1)`.
+
+B. Hybrid Persistence Logic
+- Graceful Prisma Fallback: The `analytics.js` service is designed to check for Prisma initialization. If PostgreSQL is unavailable, it suppresses errors and allows the core MongoDB-driven app to continue functioning.
+- Audit Trail Diffs: The system captures "Before" and "After" snapshots of canvas states in JSON format within PostgreSQL, enabling full action reconstruction.
+
+C. Real-Time Socket Protocol
+- Presence Management:
+  * ID Generation: Room keys follow the `SLATE-XXXX` format (Base36).
+  * Color Hashing: Collaborator colors are assigned via a string-sum hash of their Actor ID against a 12-color palette.
+- Event Flow:
+  1. `board:join`: Verifies JWT -> Extracts Actor -> Maps Role (Owner/Editor/Viewer) -> Joins Socket Room -> Logs Session in Postgres.
+  2. `stroke:start`: Initializes a `strokeBuffer` in the socket's server-side memory.
+  3. `stroke:point`: Streams incremental vector data to all peers in the room.
+  4. `stroke:end`: Flushes the buffer to MongoDB and writes an Audit log to Postgres.
+
+4. CORE FUNCTIONAL MODULES
+--------------------------
+A. Board & Workspace Management
+- Role-Based Access (RBAC): Hard-coded permissions (Owner, Editor, Viewer).
+- Versioning System: Users can save manual "Snapshots" (via `BoardHistory`) with custom labels.
+- Invites: Generates temporary invite URLs that expire after 7 days, defaulting to a specific role.
+
+B. AI Academic Assistant
+- System Prompt: Hard-coded constraints forcing strictly educational scope, under 100 words, no Markdown headers, and bolding of critical terms.
+- API: Communicates via `/api/v1/ai/chat` using the Groq Llama-3.1 model.
+
+C. Dashboard & Organization
+- Preview System: Stores base64 thumbnails (up to 50KB) in MongoDB for visual identification.
+- Pagination: Implements server-side pagination for both Board listings and Version History.
+
+5. DATA MODELS & SCHEMAS (MICRO)
+--------------------------------
+- Board: `{roomKey, ownerId, title, background, strokes: Array<Stroke>, collaboratorRoles: Map}`.
+- Stroke: `{strokeId, authorId, tool, style: {color, width, opacity}, points: Array<{x, y, pressure, t}>}`.
+- ActivityLog (Postgres): `{userId, action, boardId, metadata, createdAt}`.
+- SessionLog (Postgres): `{userId, ip, boardId, joinedAt, leftAt}`.
+
+6. REPOSITORY STRUCTURE (MACRO)
+-------------------------------
+/server
+  /data         - Utility helpers for room keys and color hashing.
+  /middleware   - Security headers, rate limiting (auth-only), and request logging.
+  /routes       - Versioned endpoints (AI, Auth, Boards, Export, Analytics).
+  /sockets      - State handlers for drawing and real-time chat.
+/client
+  /js/canvas    - Core rendering engine (splines, RDP simplification).
+  /js/storage   - Browser-side token and session persistence.
+/prisma         - Relational schema for PostgreSQL-based auditing.
+
+7. CORE TOOLS & FEATURES (Current Build)
+----------------------------------------
+- Pen Tool: High-fidelity drawing with spline interpolation.
+- Text Tool: Ability to place persistent text elements on the canvas.
+- Shapes: Rectangle, Circle, and Arrow tools with real-time preview.
+- Image Import: Import and resize images for visual learning and annotations.
+- Presence Cursors: Color-coded cursors showing peer locations.
+- AI Chat: Sidebar integration for academic help via Groq.
+- Dashboard Navigation: Quick-access button for signed-in users to return to their hub.
+- Analytics: Live tracking of drawing sessions and user interactions.
+- Board Controls: Title editing, default Line Grid theme, and background toggles.
+
+7. COMPLIANCE & PERFORMANCE
+---------------------------
+- Payload Optimization: Strokes are automatically simplified before database write.
+- Security: Secure-cookie sessions with `httpOnly` and `sameSite: lax` flags.
+- Scalability: Socket handlers use an in-memory presence map for O(1) lookups during active sessions.
+
+[DOCUMENT END - SLATEBOARD TECHNICAL OVERVIEW]

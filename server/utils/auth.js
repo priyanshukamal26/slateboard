@@ -7,13 +7,13 @@ function getJwtSecret() {
 function signToken(user) {
   return jwt.sign(
     {
-      sub: user.id,
+      sub: user._id || user.id,
       email: user.email,
       displayName: user.displayName,
       role: user.role,
     },
     getJwtSecret(),
-    { expiresIn: "7d" },
+    { expiresIn: "7d" }
   );
 }
 

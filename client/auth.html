@@ -1234,9 +1234,11 @@
         setLoading(btn, true);
 
         try {
-          await fetchApi('/api/auth/login', { email, password });
+          const data = await fetchApi('/api/auth/login', { email, password });
+          // Persist token for Bearer-header fallback
+          if (data.token) localStorage.setItem('slateboard.token', data.token);
           showFeedback('Signed in! Redirecting...', true);
-          setTimeout(() => { window.location.href = './dashboard.html'; }, 800);
+          setTimeout(() => { window.location.href = './dashboard.html'; }, 600);
         } catch (err) {
           showFeedback(err.message);
           gsap.to('.auth-form-panel.is-active', { x: -8, duration: 0.1, yoyo: true, repeat: 3 });
@@ -1292,9 +1294,10 @@
         setLoading(btn, true);
 
         try {
-          await fetchApi('/api/auth/register', { displayName: name, email, password });
+          const data = await fetchApi('/api/auth/register', { displayName: name, email, password });
+          if (data.token) localStorage.setItem('slateboard.token', data.token);
           showFeedback('Account created! Redirecting...', true);
-          setTimeout(() => { window.location.href = './dashboard.html'; }, 800);
+          setTimeout(() => { window.location.href = './dashboard.html'; }, 600);
         } catch (err) {
           showFeedback(err.message);
           gsap.to('.auth-form-panel.is-active', { x: -8, duration: 0.1, yoyo: true, repeat: 3 });

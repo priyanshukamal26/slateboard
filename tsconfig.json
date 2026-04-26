@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "outDir": "client/js/dist",
+    "declaration": false,
+    "sourceMap": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "allowJs": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "client/js/canvas/*.ts",
+    "client/js/*.ts"
+  ],
+  "exclude": ["node_modules", "client/js/dist"]
+}
