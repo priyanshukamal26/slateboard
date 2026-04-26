@@ -44,9 +44,10 @@ module.exports = function registerChatHandlers(io, socket) {
   // chat:send — broadcast message + persist
   socket.on("chat:send", async (payload) => {
     try {
-      if (!payload || !payload.boardId || !payload.text) return;
-      const text = String(payload.text).trim().slice(0, 1000);
-      if (!text) return;
+      if (!payload || !payload.boardId) return;
+      const text = payload.text ? String(payload.text).trim().slice(0, 1000) : "";
+      const { fileUrl, fileName, fileType } = payload;
+      if (!text && !fileUrl) return;
 
       const user = await resolveUser(payload.token, payload.guestId);
       const color = assignPresenceColor(user.id);
@@ -59,6 +60,9 @@ module.exports = function registerChatHandlers(io, socket) {
         displayName: user.displayName,
         color,
         text,
+        fileUrl,
+        fileName,
+        fileType,
         guest: user.guest,
       });
 
@@ -68,6 +72,9 @@ module.exports = function registerChatHandlers(io, socket) {
         displayName: user.displayName,
         color,
         text,
+        fileUrl,
+        fileName,
+        fileType,
         guest: user.guest,
         createdAt: msg.createdAt,
       };

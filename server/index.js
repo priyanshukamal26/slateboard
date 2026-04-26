@@ -14,6 +14,7 @@ const exportRoutes = require("./routes/export");
 const analyticsRoutes = require("./routes/analytics");
 const aiRoutes = require("./routes/ai");
 const boardRoutesV2 = require("./routes/v2/boards");
+const chatRoutes = require("./routes/chat");
 
 // ── Sockets ─────────────────────────────────────────────────────────────────
 const registerBoardHandlers = require("./sockets/boardHandler");
@@ -70,6 +71,7 @@ app.use("/api/v1/boards", boardRoutes);
 app.use("/api/v1/export", exportRoutes);
 app.use("/api/v1/analytics", analyticsRoutes);
 app.use("/api/v1/ai", aiRoutes);
+app.use("/api/v1/chat", chatRoutes);
 
 // ── API v2 routes (demonstrates versioning) ───────────────────────────────────
 app.use("/api/v2/boards", boardRoutesV2);

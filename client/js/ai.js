@@ -90,7 +90,7 @@
       div.style.alignSelf = "flex-start";
       div.style.maxWidth = "95%";
       const formatted = this._formatMarkdown(htmlContent);
-      div.innerHTML = `<strong><i class="fa-solid fa-graduation-cap"></i> Assistant</strong><br/><span style="font-weight: 400">${formatted}</span>`;
+      div.innerHTML = `<strong><i class="fa-solid fa-brain"></i> Brainy</strong><br/><span style="font-weight: 400">${formatted}</span>`;
     } else {
       // system / loading
       div.style.alignSelf = "center";

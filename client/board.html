@@ -1,145 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Slateboard — Whiteboard</title>
-    <meta name="description" content="Real-time collaborative whiteboard for teachers and students." />
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&display=swap"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Slateboard — Whiteboard</title>
+  <meta name="description" content="Real-time collaborative whiteboard for teachers and students." />
 
-    <!-- Font Awesome 6 (free) -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&display=swap"
+    rel="stylesheet" />
 
-    <!-- App styles -->
-    <link rel="stylesheet" href="./css/tokens.css" />
-    <link rel="stylesheet" href="./css/base.css" />
-    <link rel="stylesheet" href="./css/components.css" />
-    <link rel="stylesheet" href="./css/board.css" />
-  </head>
+  <!-- Font Awesome 6 (free) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <body class="board-body">
-    <div class="board-shell" data-toolbar-open="false" data-properties-open="false">
+  <!-- App styles -->
+  <link rel="stylesheet" href="./css/tokens.css" />
+  <link rel="stylesheet" href="./css/base.css" />
+  <link rel="stylesheet" href="./css/components.css" />
+  <link rel="stylesheet" href="./css/board.css" />
+</head>
 
-      <!-- ═══════════════════════════════════════════
+<body class="board-body">
+  <div class="board-shell" data-toolbar-open="false" data-properties-open="false">
+
+    <!-- ═══════════════════════════════════════════
            TOP BAR
       ═══════════════════════════════════════════ -->
-      <header class="topbar" role="banner">
+    <header class="topbar" role="banner">
 
-        <!-- Left: Logo + status -->
-        <div class="topbar-left">
-          <div class="logo-stack">
-            <a class="logo-mark" href="/" title="Slateboard home" aria-label="Slateboard">
-              <span>SLATEBOARD</span>
-            </a>
-            <a href="/dashboard.html" class="topbar-action-btn topbar-action-btn--compact" id="dashboard-nav-link" hidden title="Go to Dashboard">
-              <i class="fa-solid fa-table-columns"></i>
-              <span>Dashboard</span>
-            </a>
-          </div>
-          <div class="board-status">
-            <span class="room-pill" id="room-badge">
-              <i class="fa-solid fa-link room-pill__icon"></i>
-              <span id="room-key">Local</span>
-            </span>
-            <span class="mode-label" id="board-mode-label">Local board</span>
-            <span class="owner-label" id="board-owner-label" hidden style="font-size:var(--font-size-xs);font-weight:var(--font-weight-bold);text-transform:uppercase;opacity:0.6;padding-left:2px;color:var(--color-ink);"></span>
-            <span class="save-label" id="save-status">Saved</span>
-          </div>
+      <!-- Left: Logo + status -->
+      <div class="topbar-left">
+        <div class="logo-stack">
+          <a class="logo-mark" href="/" title="Slateboard home" aria-label="Slateboard">
+            <span>SLATEBOARD</span>
+          </a>
+          <a href="/dashboard.html" class="topbar-action-btn topbar-action-btn--compact" id="dashboard-nav-link" hidden
+            title="Go to Dashboard">
+            <i class="fa-solid fa-table-columns"></i>
+            <span>Dashboard</span>
+          </a>
         </div>
+        <div class="board-status">
+          <span class="room-pill" id="room-badge">
+            <i class="fa-solid fa-link room-pill__icon"></i>
+            <span id="room-key">Local</span>
+          </span>
+          <span class="mode-label" id="board-mode-label">Local board</span>
+          <span class="owner-label" id="board-owner-label" hidden
+            style="font-size:var(--font-size-xs);font-weight:var(--font-weight-bold);text-transform:uppercase;opacity:0.6;padding-left:2px;color:var(--color-ink);"></span>
+          <span class="save-label" id="save-status">Saved</span>
+        </div>
+      </div>
 
-        <!-- Centre: Theme + Drawing tool strip -->
-        <div class="topbar-center">
-          
-          <!-- Theme Dropdown -->
-          <nav class="toolbar-strip" aria-label="Theme options" role="toolbar">
-            <div class="theme-dropdown">
-              <button class="tool-btn" type="button" aria-label="Canvas Theme" title="Canvas Background" id="theme-btn">
-                <i class="fa-solid fa-image"></i>
-              </button>
-              <div class="theme-menu" id="theme-menu">
-                <div class="panel-group">
-                  <span class="panel-label">Canvas Background</span>
-                  <div class="preset-row">
-                    <button class="bg-preset-btn" type="button" data-background="blank" title="Blank">
-                      <span class="bg-preview"></span>
-                    </button>
-                    <button class="bg-preset-btn" type="button" data-background="dot" title="Dot grid">
-                      <span class="bg-preview bg-preview--dot"></span>
-                    </button>
-                    <button class="bg-preset-btn is-active" type="button" data-background="line" title="Line grid">
-                      <span class="bg-preview bg-preview--line"></span>
-                    </button>
-                    <button class="bg-preset-btn" type="button" data-background="white" title="White">
-                      <span class="bg-preview bg-preview--white"></span>
-                    </button>
-                  </div>
+      <!-- Centre: Theme + Drawing tool strip -->
+      <div class="topbar-center">
+
+        <!-- Theme Dropdown -->
+        <nav class="toolbar-strip" aria-label="Theme options" role="toolbar">
+          <div class="theme-dropdown">
+            <button class="tool-btn" type="button" aria-label="Canvas Theme" title="Canvas Background" id="theme-btn">
+              <i class="fa-solid fa-image"></i>
+            </button>
+            <div class="theme-menu" id="theme-menu">
+              <div class="panel-group">
+                <span class="panel-label">Canvas Background</span>
+                <div class="preset-row">
+                  <button class="bg-preset-btn" type="button" data-background="blank" title="Blank">
+                    <span class="bg-preview"></span>
+                  </button>
+                  <button class="bg-preset-btn" type="button" data-background="dot" title="Dot grid">
+                    <span class="bg-preview bg-preview--dot"></span>
+                  </button>
+                  <button class="bg-preset-btn is-active" type="button" data-background="line" title="Line grid">
+                    <span class="bg-preview bg-preview--line"></span>
+                  </button>
+                  <button class="bg-preset-btn" type="button" data-background="white" title="White">
+                    <span class="bg-preview bg-preview--white"></span>
+                  </button>
                 </div>
               </div>
             </div>
-          </nav>
+          </div>
+        </nav>
 
-          <nav class="toolbar-strip" aria-label="Drawing tools" role="toolbar">
+        <nav class="toolbar-strip" aria-label="Drawing tools" role="toolbar">
 
           <!-- Selection group -->
-          <button class="tool-btn" data-tool="select" type="button"
-            aria-label="Selection tool" title="Select  V">
+          <button class="tool-btn" data-tool="select" type="button" aria-label="Selection tool" title="Select  V">
             <i class="fa-solid fa-arrow-pointer"></i>
           </button>
-          <button class="tool-btn" data-tool="pan" type="button"
-            aria-label="Pan / hand tool" title="Pan  H">
+          <button class="tool-btn" data-tool="pan" type="button" aria-label="Pan / hand tool" title="Pan  H">
             <i class="fa-regular fa-hand"></i>
           </button>
 
           <span class="tool-sep" role="separator" aria-hidden="true"></span>
 
           <!-- Drawing group -->
-          <button class="tool-btn" data-tool="pen" type="button"
-            aria-label="Pen tool" title="Pen  P">
+          <button class="tool-btn" data-tool="pen" type="button" aria-label="Pen tool" title="Pen  P">
             <i class="fa-solid fa-pen"></i>
           </button>
-          <button class="tool-btn" data-tool="highlight" type="button"
-            aria-label="Highlighter tool" title="Marker  M">
+          <button class="tool-btn" data-tool="highlight" type="button" aria-label="Highlighter tool" title="Marker  M">
             <i class="fa-solid fa-highlighter"></i>
           </button>
-          <button class="tool-btn" data-tool="line" type="button"
-            aria-label="Line tool" title="Line  L">
-            <svg aria-hidden="true" focusable="false" viewBox="0 0 20 20"
-              fill="none" stroke="currentColor" stroke-linecap="round"
-              stroke-linejoin="round" width="20" height="20">
+          <button class="tool-btn" data-tool="line" type="button" aria-label="Line tool" title="Line  L">
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 20 20" fill="none" stroke="currentColor"
+              stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
               <path d="M4.167 10h11.666" stroke-width="1.5"></path>
             </svg>
           </button>
-          <button class="tool-btn" data-tool="rect" type="button"
-            aria-label="Rectangle tool" title="Rectangle  R">
+          <button class="tool-btn" data-tool="rect" type="button" aria-label="Rectangle tool" title="Rectangle  R">
             <i class="fa-regular fa-square"></i>
           </button>
-          <button class="tool-btn" data-tool="ellipse" type="button"
-            aria-label="Ellipse tool" title="Ellipse  O">
+          <button class="tool-btn" data-tool="ellipse" type="button" aria-label="Ellipse tool" title="Ellipse  O">
             <i class="fa-regular fa-circle"></i>
           </button>
-          <button class="tool-btn" data-tool="arrow" type="button"
-            aria-label="Arrow tool" title="Arrow  A">
+          <button class="tool-btn" data-tool="arrow" type="button" aria-label="Arrow tool" title="Arrow  A">
             <i class="fa-solid fa-arrow-right"></i>
           </button>
-          <button class="tool-btn" data-tool="text" type="button"
-            aria-label="Text tool" title="Text  T">
+          <button class="tool-btn" data-tool="text" type="button" aria-label="Text tool" title="Text  T">
             <i class="fa-solid fa-a"></i>
           </button>
-          <button class="tool-btn" data-tool="image" type="button"
-            aria-label="Image tool" title="Import Image  I" id="image-import-btn">
+          <button class="tool-btn" data-tool="image" type="button" aria-label="Image tool" title="Import Image  I"
+            id="image-import-btn">
             <i class="fa-solid fa-image"></i>
           </button>
           <input type="file" id="image-input" accept="image/*" hidden>
@@ -147,671 +134,591 @@
           <span class="tool-sep" role="separator" aria-hidden="true"></span>
 
           <!-- Utility group -->
-          <button class="tool-btn" data-tool="eraser" type="button"
-            aria-label="Eraser tool" title="Erase  E">
+          <button class="tool-btn" data-tool="eraser" type="button" aria-label="Eraser tool" title="Erase  E">
             <i class="fa-solid fa-eraser"></i>
           </button>
-          <button class="tool-btn" data-tool="laser" type="button"
-            aria-label="Laser pointer" title="Laser  K">
+          <button class="tool-btn" data-tool="laser" type="button" aria-label="Laser pointer" title="Laser  K">
             <i class="fa-solid fa-wand-magic-sparkles"></i>
           </button>
         </nav>
-        </div>
-
-        <!-- Right: Presence + actions -->
-        <div class="topbar-right">
-          <div class="presence-strip" id="presence-strip" aria-label="Connected collaborators"></div>
-
-          <!-- Chat toggle -->
-          <button class="topbar-action-btn topbar-action-btn--icon" id="chat-toggle" type="button"
-            aria-label="Open chat" aria-expanded="false" title="Chat" style="position:relative">
-            <i class="fa-solid fa-comments"></i>
-            <span id="chat-badge" hidden style="position:absolute;top:4px;right:4px;min-width:16px;height:16px;background:var(--color-accent);border:2px solid var(--color-ink);border-radius:50%;font-size:.55rem;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0 2px;">0</span>
-          </button>
-
-          <!-- AI toggle -->
-          <button class="topbar-action-btn topbar-action-btn--icon" id="ai-toggle" type="button"
-            aria-label="Academic AI" aria-expanded="false" title="Academic AI">
-            <i class="fa-solid fa-graduation-cap"></i>
-          </button>
-
-          <button class="topbar-action-btn" id="share-toggle" type="button"
-            aria-label="Share / collaborate" aria-expanded="false">
-            <i class="fa-solid fa-user-group"></i>
-            <span>Share</span>
-          </button>
-
-          <button class="topbar-action-btn topbar-action-btn--icon" id="export-toggle" type="button"
-            aria-label="Export board" aria-expanded="false" title="Export">
-            <i class="fa-solid fa-arrow-up-from-bracket"></i>
-          </button>
-        </div>
-      </header>
-
-      <!-- ═══════════════════════════════════════════
-           GHOST ELEMENTS — referenced by JS, not rendered
-      ═══════════════════════════════════════════ -->
-      <button id="toolbar-toggle"  style="display:none" aria-expanded="false">Pen</button>
-      <button id="board-toggle"    style="display:none" aria-expanded="false">Board</button>
-      <button id="toolbar-close"   style="display:none">Close</button>
-      <button id="board-close"     style="display:none">Close</button>
-      <div    id="tool-rail"       style="display:none"></div>
-
-      <!-- ═══════════════════════════════════════════
-           PROPERTIES PANEL (floating left)
-      ═══════════════════════════════════════════ -->
-      <aside class="properties-panel" id="properties-panel"
-        aria-label="Tool properties" hidden>
-
-        <div class="props-header">
-          <span class="props-title" id="properties-title">Pen</span>
-          <button class="icon-close-btn" id="properties-close" type="button"
-            aria-label="Close properties">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-
-        <p class="tool-help" id="tool-help">Click to start drawing.</p>
-
-        <!-- Stroke colour -->
-        <div class="panel-group">
-          <span class="panel-label">Stroke</span>
-          <div class="swatch-grid">
-            <button class="swatch is-selected" type="button" data-color="#1e1e1e"
-              style="--swatch:#1e1e1e" aria-label="Black"></button>
-            <button class="swatch" type="button" data-color="#e03131"
-              style="--swatch:#e03131" aria-label="Red"></button>
-            <button class="swatch" type="button" data-color="#f08c00"
-              style="--swatch:#f08c00" aria-label="Orange"></button>
-            <button class="swatch" type="button" data-color="#2f9e44"
-              style="--swatch:#2f9e44" aria-label="Green"></button>
-            <button class="swatch" type="button" data-color="#1971c2"
-              style="--swatch:#1971c2" aria-label="Blue"></button>
-            <button class="swatch" type="button" data-color="#862e9c"
-              style="--swatch:#862e9c" aria-label="Purple"></button>
-            <button class="swatch" type="button" data-color="#FF6B6B"
-              style="--swatch:#FF6B6B" aria-label="Coral"></button>
-            <button class="swatch" type="button" data-color="#2EC4B6"
-              style="--swatch:#2EC4B6" aria-label="Teal"></button>
-            <button class="swatch" type="button" data-color="#C4B5FD"
-              style="--swatch:#C4B5FD" aria-label="Lavender"></button>
-            <button class="swatch swatch--white" type="button" data-color="#ffffff"
-              style="--swatch:#ffffff" aria-label="White"></button>
-          </div>
-        </div>
-
-        <!-- Stroke width -->
-        <div class="panel-group">
-          <span class="panel-label">Stroke width</span>
-          <div class="preset-row">
-            <button class="width-preset-btn is-active" type="button" data-width-preset="2" title="Thin">
-              <span class="stroke-preview stroke-preview--s"></span>
-            </button>
-            <button class="width-preset-btn" type="button" data-width-preset="6" title="Medium">
-              <span class="stroke-preview stroke-preview--m"></span>
-            </button>
-            <button class="width-preset-btn" type="button" data-width-preset="14" title="Thick">
-              <span class="stroke-preview stroke-preview--l"></span>
-            </button>
-          </div>
-          <!-- Hidden input — JS binds to this -->
-          <input id="stroke-width" type="range" min="1" max="20" value="6" aria-label="Stroke width" style="display:none" />
-          <span id="stroke-width-value" style="display:none">6 px</span>
-        </div>
-
-        <!-- Stroke style -->
-        <div class="panel-group">
-          <span class="panel-label">Stroke style</span>
-          <div class="preset-row">
-            <button class="style-preset-btn is-active" type="button" data-pattern-preset="solid" title="Solid">
-              <span class="dash-preview dash-preview--solid"></span>
-            </button>
-            <button class="style-preset-btn" type="button" data-pattern-preset="dashed" title="Dashed">
-              <span class="dash-preview dash-preview--dashed"></span>
-            </button>
-            <button class="style-preset-btn" type="button" data-pattern-preset="dotted" title="Dotted">
-              <span class="dash-preview dash-preview--dotted"></span>
-            </button>
-          </div>
-          <!-- Hidden select — JS binds to this -->
-          <select id="stroke-pattern" aria-label="Stroke pattern" style="display:none">
-            <option value="solid">Solid</option>
-            <option value="dashed">Dashed</option>
-            <option value="dotted">Dotted</option>
-          </select>
-        </div>
-
-        <!-- Fill toggle (rect / ellipse only) -->
-        <div class="panel-group">
-          <label class="toggle-row" for="fill-toggle">
-            <input id="fill-toggle" type="checkbox" class="toggle-check" />
-            <span class="toggle-label">Fill shape</span>
-          </label>
-        </div>
-
-        <!-- Text size (text tool only) -->
-        <div class="panel-group">
-          <div class="panel-label-row">
-            <span class="panel-label">Text size</span>
-            <span class="range-value" id="text-size-value">24 px</span>
-          </div>
-          <input id="text-size" type="range" min="12" max="72" value="24"
-            aria-label="Text size" />
-        </div>
-
-        <!-- Arrow head (arrow tool only) -->
-        <div class="panel-group">
-          <div class="panel-label-row">
-            <span class="panel-label">Arrow head</span>
-            <span class="range-value" id="arrow-head-value">18 px</span>
-          </div>
-          <input id="arrow-head" type="range" min="8" max="36" value="18"
-            aria-label="Arrow head size" />
-        </div>
-
-        <!-- Opacity -->
-        <div class="panel-group">
-          <div class="panel-label-row">
-            <span class="panel-label">Opacity</span>
-            <span class="range-value" id="stroke-opacity-value">100%</span>
-          </div>
-          <input id="stroke-opacity" type="range" min="0.1" max="1" step="0.05" value="1"
-            aria-label="Opacity" />
-        </div>
-
-
-      </aside>
-
-      <!-- ═══════════════════════════════════════════
-           BOARD PANEL — ghost (background in properties now)
-      ═══════════════════════════════════════════ -->
-      <section class="board-panel" id="board-panel"
-        aria-label="Board settings" hidden>
-        <!-- [data-background] buttons exist above; this panel is a JS-required ghost -->
-      </section>
-
-      <!-- ═══════════════════════════════════════════
-           EXPORT PANEL
-      ═══════════════════════════════════════════ -->
-      <section class="float-panel" id="export-panel"
-        aria-label="Export options" hidden>
-        <div class="float-panel-header">
-          <span class="float-panel-title">Export</span>
-          <button class="icon-close-btn" id="export-close" type="button"
-            aria-label="Close export panel">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-        <div class="panel-group">
-          <label class="panel-label" for="export-filename">File name</label>
-          <input id="export-filename" class="text-input" type="text"
-            value="slateboard-board" autocomplete="off" />
-        </div>
-        <div class="panel-group">
-          <label class="toggle-row" for="export-include-background">
-            <input id="export-include-background" type="checkbox"
-              class="toggle-check" checked />
-            <span class="toggle-label">Include background</span>
-          </label>
-        </div>
-        <div class="export-actions">
-          <button class="export-btn" id="export-png-button" type="button">
-            <i class="fa-regular fa-image"></i> View PNG
-          </button>
-          <button class="export-btn" id="export-png-full-button" type="button">
-            <i class="fa-solid fa-expand"></i> Full PNG
-          </button>
-          <button class="export-btn" id="export-svg-button" type="button">
-            <i class="fa-solid fa-bezier-curve"></i> SVG
-          </button>
-        </div>
-      </section>
-
-      <!-- ═══════════════════════════════════════════
-           SHARE PANEL
-      ═══════════════════════════════════════════ -->
-      <section class="float-panel float-panel--wide" id="share-panel"
-        aria-label="Share and collaborate" hidden>
-        <div class="float-panel-header">
-          <span class="float-panel-title">Collaborate</span>
-          <button class="icon-close-btn" id="share-close" type="button"
-            aria-label="Close share panel">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-        <div class="panel-group">
-          <label class="panel-label" for="share-room-key">Room key</label>
-          <div class="copy-field">
-            <input id="share-room-key" class="text-input text-input--mono" type="text"
-              readonly aria-label="Room key" />
-            <button class="copy-btn" id="copy-room-button" type="button"
-              aria-label="Copy room key">
-              <i class="fa-regular fa-copy"></i>
-            </button>
-          </div>
-        </div>
-        <div class="panel-group">
-          <label class="panel-label" for="share-url">Share URL</label>
-          <div class="copy-field">
-            <input id="share-url" class="text-input text-input--small" type="text"
-              readonly aria-label="Share URL" />
-            <button class="copy-btn" id="copy-share-button" type="button"
-              aria-label="Copy share link">
-              <i class="fa-regular fa-copy"></i>
-            </button>
-          </div>
-        </div>
-        <div class="panel-group">
-          <label class="panel-label" for="share-default-role">Default join role</label>
-          <select id="share-default-role" class="text-select" aria-label="Default join role">
-            <option value="editor">Editor</option>
-            <option value="viewer">Viewer</option>
-          </select>
-        </div>
-        <div class="panel-group">
-          <button class="invite-btn" id="update-share-button" type="button">
-            <i class="fa-solid fa-rotate"></i> Update invite
-          </button>
-        </div>
-        <div class="panel-group">
-          <span class="panel-label">People</span>
-          <div class="collaborator-list" id="collaborator-list"></div>
-        </div>
-      </section>
-
-      <!-- ═══════════════════════════════════════════
-           CHAT PANEL
-      ═══════════════════════════════════════════ -->
-      <section class="float-panel float-panel--wide" id="chat-panel" aria-label="Chat" hidden style="right: 80px; top: 80px;">
-        <div class="float-panel-header">
-          <span class="float-panel-title">Chat</span>
-          <button class="icon-close-btn" id="chat-close" type="button" aria-label="Close chat">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-        <div class="chat-messages" id="chat-messages" style="flex:1;overflow-y:auto;min-height:200px;max-height:300px;margin-bottom:12px;padding-right:8px;display:flex;flex-direction:column;gap:8px;">
-          <!-- Chat Intro Box -->
-          <div style="background: var(--color-canvas); border: 2px solid var(--color-ink); padding: 12px; margin-bottom: 8px; box-shadow: 2px 2px 0 var(--color-ink); font-size: 0.85rem;">
-            <p style="font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-sea); margin-bottom: 4px;">
-              <i class="fa-solid fa-tower-broadcast"></i> Room Service Online
-            </p>
-            <p style="font-weight: 500;">Connected to board session. Messages are shared with all collaborators.</p>
-          </div>
-        </div>
-        <div class="chat-input-row" style="display:flex;gap:8px; margin-top: auto; padding-top: 8px; border-top: 1px solid rgba(0,0,0,0.1);">
-          <input type="text" id="chat-input" class="text-input" style="flex:1" placeholder="Type message..." autocomplete="off" />
-          <button class="dash-btn dash-btn--accent" id="chat-send-btn" type="button" aria-label="Send message">
-            <i class="fa-solid fa-paper-plane"></i>
-          </button>
-        </div>
-      </section>
-
-      <!-- ═══════════════════════════════════════════
-           AI CHAT PANEL
-      ═══════════════════════════════════════════ -->
-      <section class="float-panel float-panel--wide" id="ai-panel" aria-label="AI Assistant" hidden style="right: 80px; top: 80px;">
-        <div class="float-panel-header" style="background: var(--color-ink); color: var(--color-white); margin: -16px -16px 16px -16px; padding: 12px 16px; border-bottom: var(--border-heavy); display: flex; align-items: center; justify-content: space-between;">
-          <span class="float-panel-title" style="color: var(--color-white); margin: 0; display: flex; align-items: center; gap: 8px;">
-            <i class="fa-solid fa-graduation-cap"></i> Academic AI Assistant
-          </span>
-          <button id="ai-close" type="button" aria-label="Close AI panel" style="background: transparent; border: none; color: var(--color-white); cursor: pointer; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; padding: 4px;">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-        
-        <div class="chat-messages" id="ai-response" style="flex:1;overflow-y:auto;min-height:200px;max-height:350px;margin-bottom:12px;padding-right:8px;display:flex;flex-direction:column;gap:12px; font-size: 0.95rem;">
-          <!-- Intro Message as a System Box -->
-          <div style="background: var(--color-canvas); border: 2px solid var(--color-ink); padding: 12px; margin: 8px 0; box-shadow: 2px 2px 0 var(--color-ink); font-size: 0.85rem;">
-            <p style="font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-accent); margin-bottom: 4px;">
-              <i class="fa-solid fa-microchip"></i> Academic AI Online
-            </p>
-            <p style="font-weight: 500;">Ready for academic inquiries. Adapted for professional reasoning.</p>
-          </div>
-        </div>
-        
-        <div class="chat-input-row" style="display:flex;gap:8px; margin-top: auto; padding-top: 8px; border-top: 1px solid rgba(0,0,0,0.1);">
-          <input type="text" id="ai-prompt" class="text-input" style="flex:1" placeholder="Ask an academic question..." autocomplete="off" />
-          <button class="dash-btn dash-btn--accent" id="ai-generate-btn" type="button" aria-label="Ask AI">
-            <i class="fa-solid fa-paper-plane"></i>
-          </button>
-        </div>
-      </section>
-
-      <!-- ═══════════════════════════════════════════
-           CANVAS
-      ═══════════════════════════════════════════ -->
-      <main class="canvas-stage" aria-label="Whiteboard canvas">
-        <canvas id="board-canvas" aria-hidden="true"></canvas>
-        <textarea
-          id="inline-text-editor"
-          class="inline-text-editor"
-          rows="1"
-          hidden
-          aria-label="Type text on canvas"
-          autocomplete="off"
-          spellcheck="false"
-        ></textarea>
-      </main>
-
-    </div><!-- /.board-shell -->
-
-    <!-- ═══════════════════════════════════════════
-         ZOOM DOCK — bottom left
-    ═══════════════════════════════════════════ -->
-    <div class="zoom-dock" id="zoom-dock" aria-label="Zoom controls">
-      <button class="dock-icon-btn" id="undo-button" type="button"
-        aria-label="Undo (Ctrl+Z)" title="Undo">
-        <i class="fa-solid fa-rotate-left"></i>
-      </button>
-      <button class="dock-icon-btn" id="redo-button" type="button"
-        aria-label="Redo (Ctrl+Y)" title="Redo">
-        <i class="fa-solid fa-rotate-right"></i>
-      </button>
-
-      <span class="dock-sep" role="separator" aria-hidden="true"></span>
-
-      <button class="dock-icon-btn" id="zoom-out-button" type="button"
-        aria-label="Zoom out" title="Zoom out">
-        <i class="fa-solid fa-minus"></i>
-      </button>
-      <span class="zoom-value" id="zoom-indicator" aria-live="polite" aria-atomic="true">100%</span>
-      <button class="dock-icon-btn" id="zoom-in-button" type="button"
-        aria-label="Zoom in" title="Zoom in">
-        <i class="fa-solid fa-plus"></i>
-      </button>
-
-      <span class="dock-sep" role="separator" aria-hidden="true"></span>
-
-      <button class="dock-icon-btn" id="fit-button" type="button"
-        aria-label="Fit content to screen" title="Fit to content">
-        <i class="fa-solid fa-expand"></i>
-      </button>
-
-      <!-- Ghost inputs/buttons — JS binds to these -->
-      <input id="zoom-range" type="range" min="25" max="400" value="100"
-        aria-hidden="true" style="display:none" />
-      <input id="zoom-input" class="zoom-input" type="number" min="25" max="400"
-        value="100" aria-hidden="true" style="display:none" />
-      <button id="zoom-toggle" style="display:none">Hide</button>
-    </div>
-
-    <!-- ═══════════════════════════════════════════
-         HISTORY DOCK — bottom right (ghost, undo/redo merged into zoom-dock above)
-    ═══════════════════════════════════════════ -->
-    <div class="history-dock" aria-hidden="true" style="display:none">
-      <!-- Undo/redo are in zoom-dock. These ghost elements satisfy any CSS selectors. -->
-    </div>
-
-    <!-- ═══════════════════════════════════════════
-         TOAST STACK
-    ═══════════════════════════════════════════ -->
-    <div class="toast-stack" id="toast-stack"
-      aria-live="polite" aria-atomic="false" role="status"></div>
-
-    <!-- ═══════════════════════════════════════════
-         KEYBOARD SHORTCUTS MODAL
-    ═══════════════════════════════════════════ -->
-    <div class="modal-overlay" id="shortcuts-modal" hidden aria-hidden="true">
-      <div class="modal-card" role="dialog" aria-modal="true"
-        aria-labelledby="shortcuts-heading">
-
-        <div class="modal-header">
-          <h2 class="modal-title" id="shortcuts-heading">Keyboard Shortcuts</h2>
-          <button class="icon-close-btn" id="shortcuts-close" type="button"
-            aria-label="Close shortcuts panel">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-
-        <div class="shortcuts-grid">
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>V</kbd></div>
-            <span>Select</span>
-          </div>
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>H</kbd></div>
-            <span>Pan</span>
-          </div>
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>P</kbd></div>
-            <span>Pen</span>
-          </div>
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>L</kbd></div>
-            <span>Line</span>
-          </div>
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>R</kbd></div>
-            <span>Rectangle</span>
-          </div>
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>O</kbd></div>
-            <span>Ellipse</span>
-          </div>
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>A</kbd></div>
-            <span>Arrow</span>
-          </div>
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>T</kbd></div>
-            <span>Text</span>
-          </div>
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>E</kbd></div>
-            <span>Eraser</span>
-          </div>
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>Space</kbd> + drag</div>
-            <span>Pan canvas</span>
-          </div>
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>Ctrl</kbd> + scroll</div>
-            <span>Zoom</span>
-          </div>
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>Ctrl</kbd> <kbd>Z</kbd></div>
-            <span>Undo</span>
-          </div>
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>Ctrl</kbd> <kbd>Y</kbd></div>
-            <span>Redo</span>
-          </div>
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>Del</kbd></div>
-            <span>Delete selection</span>
-          </div>
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>↑ ↓ ← →</kbd></div>
-            <span>Nudge 1 px</span>
-          </div>
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>Shift</kbd> + arrows</div>
-            <span>Nudge 10 px</span>
-          </div>
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>?</kbd></div>
-            <span>This help</span>
-          </div>
-          <div class="shortcut-row">
-            <div class="shortcut-keys"><kbd>Esc</kbd></div>
-            <span>Close panel</span>
-          </div>
-        </div>
-
       </div>
 
-      <!-- ═══════════════════════════════════════════
+      <!-- Right: Presence + actions -->
+      <div class="topbar-right">
+        <div class="presence-strip" id="presence-strip" aria-label="Connected collaborators"></div>
+
+        <!-- Chat toggle -->
+        <button class="topbar-action-btn topbar-action-btn--icon" id="chat-toggle" type="button" aria-label="Open chat"
+          aria-expanded="false" title="Chat" style="position:relative">
+          <i class="fa-solid fa-comments"></i>
+          <span id="chat-badge" hidden
+            style="position:absolute;top:4px;right:4px;min-width:16px;height:16px;background:var(--color-accent);border:2px solid var(--color-ink);border-radius:50%;font-size:.55rem;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0 2px;">0</span>
+        </button>
+
+        <!-- AI toggle -->
+        <button class="topbar-action-btn topbar-action-btn--icon" id="ai-toggle" type="button" aria-label="Academic AI"
+          aria-expanded="false" title="Academic AI">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </button>
+
+        <button class="topbar-action-btn" id="share-toggle" type="button" aria-label="Share / collaborate"
+          aria-expanded="false">
+          <i class="fa-solid fa-user-group"></i>
+          <span>Share</span>
+        </button>
+
+        <button class="topbar-action-btn topbar-action-btn--icon" id="export-toggle" type="button"
+          aria-label="Export board" aria-expanded="false" title="Export">
+          <i class="fa-solid fa-arrow-up-from-bracket"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════
+           GHOST ELEMENTS — referenced by JS, not rendered
+      ═══════════════════════════════════════════ -->
+    <button id="toolbar-toggle" style="display:none" aria-expanded="false">Pen</button>
+    <button id="board-toggle" style="display:none" aria-expanded="false">Board</button>
+    <button id="toolbar-close" style="display:none">Close</button>
+    <button id="board-close" style="display:none">Close</button>
+    <div id="tool-rail" style="display:none"></div>
+
+    <!-- ═══════════════════════════════════════════
+           PROPERTIES PANEL (floating left)
+      ═══════════════════════════════════════════ -->
+    <aside class="properties-panel" id="properties-panel" aria-label="Tool properties" hidden>
+
+      <div class="props-header">
+        <span class="props-title" id="properties-title">Pen</span>
+        <button class="icon-close-btn" id="properties-close" type="button" aria-label="Close properties">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <p class="tool-help" id="tool-help">Click to start drawing.</p>
+
+      <!-- Stroke colour -->
+      <div class="panel-group">
+        <span class="panel-label">Stroke</span>
+        <div class="swatch-grid">
+          <button class="swatch is-selected" type="button" data-color="#1e1e1e" style="--swatch:#1e1e1e"
+            aria-label="Black"></button>
+          <button class="swatch" type="button" data-color="#e03131" style="--swatch:#e03131" aria-label="Red"></button>
+          <button class="swatch" type="button" data-color="#f08c00" style="--swatch:#f08c00"
+            aria-label="Orange"></button>
+          <button class="swatch" type="button" data-color="#2f9e44" style="--swatch:#2f9e44"
+            aria-label="Green"></button>
+          <button class="swatch" type="button" data-color="#1971c2" style="--swatch:#1971c2" aria-label="Blue"></button>
+          <button class="swatch" type="button" data-color="#862e9c" style="--swatch:#862e9c"
+            aria-label="Purple"></button>
+          <button class="swatch" type="button" data-color="#FF6B6B" style="--swatch:#FF6B6B"
+            aria-label="Coral"></button>
+          <button class="swatch" type="button" data-color="#2EC4B6" style="--swatch:#2EC4B6" aria-label="Teal"></button>
+          <button class="swatch" type="button" data-color="#C4B5FD" style="--swatch:#C4B5FD"
+            aria-label="Lavender"></button>
+          <button class="swatch swatch--white" type="button" data-color="#ffffff" style="--swatch:#ffffff"
+            aria-label="White"></button>
+        </div>
+      </div>
+
+      <!-- Stroke width -->
+      <div class="panel-group">
+        <span class="panel-label">Stroke width</span>
+        <div class="preset-row">
+          <button class="width-preset-btn is-active" type="button" data-width-preset="2" title="Thin">
+            <span class="stroke-preview stroke-preview--s"></span>
+          </button>
+          <button class="width-preset-btn" type="button" data-width-preset="6" title="Medium">
+            <span class="stroke-preview stroke-preview--m"></span>
+          </button>
+          <button class="width-preset-btn" type="button" data-width-preset="14" title="Thick">
+            <span class="stroke-preview stroke-preview--l"></span>
+          </button>
+        </div>
+        <!-- Hidden input — JS binds to this -->
+        <input id="stroke-width" type="range" min="1" max="20" value="6" aria-label="Stroke width"
+          style="display:none" />
+        <span id="stroke-width-value" style="display:none">6 px</span>
+      </div>
+
+      <!-- Stroke style -->
+      <div class="panel-group">
+        <span class="panel-label">Stroke style</span>
+        <div class="preset-row">
+          <button class="style-preset-btn is-active" type="button" data-pattern-preset="solid" title="Solid">
+            <span class="dash-preview dash-preview--solid"></span>
+          </button>
+          <button class="style-preset-btn" type="button" data-pattern-preset="dashed" title="Dashed">
+            <span class="dash-preview dash-preview--dashed"></span>
+          </button>
+          <button class="style-preset-btn" type="button" data-pattern-preset="dotted" title="Dotted">
+            <span class="dash-preview dash-preview--dotted"></span>
+          </button>
+        </div>
+        <!-- Hidden select — JS binds to this -->
+        <select id="stroke-pattern" aria-label="Stroke pattern" style="display:none">
+          <option value="solid">Solid</option>
+          <option value="dashed">Dashed</option>
+          <option value="dotted">Dotted</option>
+        </select>
+      </div>
+
+      <!-- Fill toggle (rect / ellipse only) -->
+      <div class="panel-group">
+        <label class="toggle-row" for="fill-toggle">
+          <input id="fill-toggle" type="checkbox" class="toggle-check" />
+          <span class="toggle-label">Fill shape</span>
+        </label>
+      </div>
+
+      <!-- Text size (text tool only) -->
+      <div class="panel-group">
+        <div class="panel-label-row">
+          <span class="panel-label">Text size</span>
+          <span class="range-value" id="text-size-value">24 px</span>
+        </div>
+        <input id="text-size" type="range" min="12" max="72" value="24" aria-label="Text size" />
+      </div>
+
+      <!-- Arrow head (arrow tool only) -->
+      <div class="panel-group">
+        <div class="panel-label-row">
+          <span class="panel-label">Arrow head</span>
+          <span class="range-value" id="arrow-head-value">18 px</span>
+        </div>
+        <input id="arrow-head" type="range" min="8" max="36" value="18" aria-label="Arrow head size" />
+      </div>
+
+      <!-- Opacity -->
+      <div class="panel-group">
+        <div class="panel-label-row">
+          <span class="panel-label">Opacity</span>
+          <span class="range-value" id="stroke-opacity-value">100%</span>
+        </div>
+        <input id="stroke-opacity" type="range" min="0.1" max="1" step="0.05" value="1" aria-label="Opacity" />
+      </div>
+
+
+    </aside>
+
+    <!-- ═══════════════════════════════════════════
+           BOARD PANEL — ghost (background in properties now)
+      ═══════════════════════════════════════════ -->
+    <section class="board-panel" id="board-panel" aria-label="Board settings" hidden>
+      <!-- [data-background] buttons exist above; this panel is a JS-required ghost -->
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+           EXPORT PANEL
+      ═══════════════════════════════════════════ -->
+    <section class="float-panel" id="export-panel" aria-label="Export options" hidden>
+      <div class="float-panel-header">
+        <span class="float-panel-title">Export</span>
+        <button class="icon-close-btn" id="export-close" type="button" aria-label="Close export panel">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="panel-group">
+        <label class="panel-label" for="export-filename">File name</label>
+        <input id="export-filename" class="text-input" type="text" value="slateboard-board" autocomplete="off" />
+      </div>
+      <div class="panel-group">
+        <label class="toggle-row" for="export-include-background">
+          <input id="export-include-background" type="checkbox" class="toggle-check" checked />
+          <span class="toggle-label">Include background</span>
+        </label>
+      </div>
+      <div class="export-actions">
+        <button class="export-btn" id="export-png-button" type="button">
+          <i class="fa-regular fa-image"></i> View PNG
+        </button>
+        <button class="export-btn" id="export-png-full-button" type="button">
+          <i class="fa-solid fa-expand"></i> Full PNG
+        </button>
+        <button class="export-btn" id="export-svg-button" type="button">
+          <i class="fa-solid fa-bezier-curve"></i> SVG
+        </button>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+           SHARE PANEL
+      ═══════════════════════════════════════════ -->
+    <section class="float-panel float-panel--wide" id="share-panel" aria-label="Share and collaborate" hidden>
+      <div class="float-panel-header">
+        <span class="float-panel-title">Collaborate</span>
+        <button class="icon-close-btn" id="share-close" type="button" aria-label="Close share panel">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="panel-group">
+        <label class="panel-label" for="share-room-key">Room key</label>
+        <div class="copy-field">
+          <input id="share-room-key" class="text-input text-input--mono" type="text" readonly aria-label="Room key" />
+          <button class="copy-btn" id="copy-room-button" type="button" aria-label="Copy room key">
+            <i class="fa-regular fa-copy"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-group">
+        <label class="panel-label" for="share-url">Share URL</label>
+        <div class="copy-field">
+          <input id="share-url" class="text-input text-input--small" type="text" readonly aria-label="Share URL" />
+          <button class="copy-btn" id="copy-share-button" type="button" aria-label="Copy share link">
+            <i class="fa-regular fa-copy"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-group">
+        <label class="panel-label" for="share-default-role">Default join role</label>
+        <select id="share-default-role" class="text-select" aria-label="Default join role">
+          <option value="editor">Editor</option>
+          <option value="viewer">Viewer</option>
+        </select>
+      </div>
+      <div class="panel-group">
+        <button class="invite-btn" id="update-share-button" type="button">
+          <i class="fa-solid fa-rotate"></i> Update invite
+        </button>
+      </div>
+      <div class="panel-group">
+        <span class="panel-label">People</span>
+        <div class="collaborator-list" id="collaborator-list"></div>
+      </div>
+    </section>
+
+    <!-- [REMOVED DUPLICATE CHAT/AI PANELS] -->
+
+    <!-- ═══════════════════════════════════════════
+           CANVAS
+      ═══════════════════════════════════════════ -->
+    <main class="canvas-stage" aria-label="Whiteboard canvas">
+      <canvas id="board-canvas" aria-hidden="true"></canvas>
+      <textarea id="inline-text-editor" class="inline-text-editor" rows="1" hidden aria-label="Type text on canvas"
+        autocomplete="off" spellcheck="false"></textarea>
+    </main>
+
+  </div><!-- /.board-shell -->
+
+  <!-- ═══════════════════════════════════════════
+         ZOOM DOCK — bottom left
+    ═══════════════════════════════════════════ -->
+  <div class="zoom-dock" id="zoom-dock" aria-label="Zoom controls">
+    <button class="dock-icon-btn" id="undo-button" type="button" aria-label="Undo (Ctrl+Z)" title="Undo">
+      <i class="fa-solid fa-rotate-left"></i>
+    </button>
+    <button class="dock-icon-btn" id="redo-button" type="button" aria-label="Redo (Ctrl+Y)" title="Redo">
+      <i class="fa-solid fa-rotate-right"></i>
+    </button>
+
+    <span class="dock-sep" role="separator" aria-hidden="true"></span>
+
+    <button class="dock-icon-btn" id="zoom-out-button" type="button" aria-label="Zoom out" title="Zoom out">
+      <i class="fa-solid fa-minus"></i>
+    </button>
+    <span class="zoom-value" id="zoom-indicator" aria-live="polite" aria-atomic="true">100%</span>
+    <button class="dock-icon-btn" id="zoom-in-button" type="button" aria-label="Zoom in" title="Zoom in">
+      <i class="fa-solid fa-plus"></i>
+    </button>
+
+    <span class="dock-sep" role="separator" aria-hidden="true"></span>
+
+    <button class="dock-icon-btn" id="fit-button" type="button" aria-label="Fit content to screen"
+      title="Fit to content">
+      <i class="fa-solid fa-expand"></i>
+    </button>
+
+    <!-- Ghost inputs/buttons — JS binds to these -->
+    <input id="zoom-range" type="range" min="25" max="400" value="100" aria-hidden="true" style="display:none" />
+    <input id="zoom-input" class="zoom-input" type="number" min="25" max="400" value="100" aria-hidden="true"
+      style="display:none" />
+    <button id="zoom-toggle" style="display:none">Hide</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+         HISTORY DOCK — bottom right (ghost, undo/redo merged into zoom-dock above)
+    ═══════════════════════════════════════════ -->
+  <div class="history-dock" aria-hidden="true" style="display:none">
+    <!-- Undo/redo are in zoom-dock. These ghost elements satisfy any CSS selectors. -->
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+         TOAST STACK
+    ═══════════════════════════════════════════ -->
+  <div class="toast-stack" id="toast-stack" aria-live="polite" aria-atomic="false" role="status"></div>
+
+  <!-- ═══════════════════════════════════════════
+         KEYBOARD SHORTCUTS MODAL
+    ═══════════════════════════════════════════ -->
+  <div class="modal-overlay" id="shortcuts-modal" hidden aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="shortcuts-heading">
+
+      <div class="modal-header">
+        <h2 class="modal-title" id="shortcuts-heading">Keyboard Shortcuts</h2>
+        <button class="icon-close-btn" id="shortcuts-close" type="button" aria-label="Close shortcuts panel">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="shortcuts-grid">
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>V</kbd></div>
+          <span>Select</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>H</kbd></div>
+          <span>Pan</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>P</kbd></div>
+          <span>Pen</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>L</kbd></div>
+          <span>Line</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>R</kbd></div>
+          <span>Rectangle</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>O</kbd></div>
+          <span>Ellipse</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>A</kbd></div>
+          <span>Arrow</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>T</kbd></div>
+          <span>Text</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>E</kbd></div>
+          <span>Eraser</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>Space</kbd> + drag</div>
+          <span>Pan canvas</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>Ctrl</kbd> + scroll</div>
+          <span>Zoom</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>Ctrl</kbd> <kbd>Z</kbd></div>
+          <span>Undo</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>Ctrl</kbd> <kbd>Y</kbd></div>
+          <span>Redo</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>Del</kbd></div>
+          <span>Delete selection</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>↑ ↓ ← →</kbd></div>
+          <span>Nudge 1 px</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>Shift</kbd> + arrows</div>
+          <span>Nudge 10 px</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>?</kbd></div>
+          <span>This help</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><kbd>Esc</kbd></div>
+          <span>Close panel</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
            CHAT PANEL
       ═══════════════════════════════════════════ -->
-      <aside class="side-panel" id="chat-panel" hidden aria-label="Chat" style="
-        position:fixed;top:0;right:0;bottom:0;width:320px;z-index:500;
-        background:var(--color-ink);border-left:var(--border-heavy);
-        display:flex;flex-direction:column;
-        background-image:linear-gradient(to right,rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.04) 1px,transparent 1px);
-        background-size:24px 24px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.1rem;border-bottom:3px solid rgba(255,255,255,.15);">
-          <span style="color:var(--color-canvas);font-size:.8rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;"><i class="fa-solid fa-comments" style="color:var(--color-secondary);margin-right:.4rem;"></i>Board Chat</span>
-          <button id="chat-close" type="button" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.6);font-size:1rem;padding:.2rem;" aria-label="Close chat"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div id="chat-messages" style="flex:1;overflow-y:auto;padding:.75rem;display:flex;flex-direction:column;gap:.5rem;"></div>
-        <p id="chat-typing" hidden style="padding:.3rem .75rem;font-size:.65rem;font-family:'Space Mono',monospace;color:rgba(255,255,255,.4);margin:0;"></p>
-        <div style="display:flex;gap:.5rem;padding:.75rem;border-top:3px solid rgba(255,255,255,.12);">
-          <textarea id="chat-input" rows="1" placeholder="Message..." style="flex:1;resize:none;padding:.5rem .75rem;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.2);color:var(--color-canvas);font-family:'Space Grotesk',sans-serif;font-size:.82rem;font-weight:600;border-radius:0;" aria-label="Chat message"></textarea>
-          <button id="chat-send-btn" type="button" style="padding:.5rem .85rem;background:var(--color-accent);border:2px solid var(--color-ink);cursor:pointer;font-weight:900;font-size:.8rem;color:var(--color-ink);" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-      </aside>
+  <section class="float-panel float-panel--wide" id="chat-panel" hidden aria-label="Chat">
+    <div class="float-panel-header">
+      <h2 class="float-panel-title"><i class="fa-solid fa-comments"
+          style="color:var(--color-accent);margin-right:.4rem;"></i>Board Chat</h2>
+      <button class="icon-close-btn" id="chat-close" type="button" aria-label="Close chat">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div id="chat-messages"
+      style="height:350px;overflow-y:auto;padding:.5rem;display:flex;flex-direction:column;gap:.5rem;border:var(--border-heavy);background:var(--color-white);margin-bottom:1rem;background-image:var(--pattern-halftone-light);background-size:12px 12px;">
+    </div>
+    <p id="chat-typing" hidden
+      style="padding:0 .5rem .5rem;font-size:.65rem;font-family:'Space Mono',monospace;color:var(--color-ink);opacity:0.6;margin:0;">
+    </p>
+    <div style="display:flex;gap:.5rem;align-items:center;">
+      <input type="file" id="chat-file-input" hidden />
+      <button id="chat-upload-btn" type="button" class="tool-btn"
+        style="border:var(--border-heavy);box-shadow:2px 2px 0 var(--color-ink);" title="Upload file"
+        aria-label="Upload file"><i class="fa-solid fa-paperclip"></i></button>
+      <textarea id="chat-input" class="text-input" rows="1" placeholder="Message..."
+        style="flex:1;resize:none;padding:.5rem .75rem;" aria-label="Chat message"></textarea>
+      <button id="chat-send-btn" type="button" class="tool-btn"
+        style="background:var(--color-accent);border:var(--border-heavy);box-shadow:2px 2px 0 var(--color-ink);"
+        aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  </section>
 
-      <!-- ═══════════════════════════════════════════
+  <!-- ═══════════════════════════════════════════
            AI PANEL
       ═══════════════════════════════════════════ -->
-      <aside id="ai-panel" hidden aria-label="AI Assistant" style="
-        position:fixed;top:0;right:0;bottom:0;width:340px;z-index:500;
-        background:var(--color-canvas);border-left:var(--border-heavy);
-        display:flex;flex-direction:column;overflow-y:auto;
-        background-image:linear-gradient(to right,rgba(0,0,0,.06) 1px,transparent 1px),linear-gradient(to bottom,rgba(0,0,0,.06) 1px,transparent 1px);
-        background-size:24px 24px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.1rem;border-bottom:var(--border-heavy);background:var(--color-secondary);">
-          <span style="font-size:.8rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;"><i class="fa-solid fa-wand-sparkles" style="margin-right:.4rem;"></i>AI Assistant</span>
-          <button id="ai-close" type="button" style="background:none;border:none;cursor:pointer;font-size:1rem;padding:.2rem;" aria-label="Close AI panel"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div style="padding:1rem;display:flex;flex-direction:column;gap:1rem;">
-          <!-- API Key -->
-          <div style="background:var(--color-white);border:var(--border-heavy);box-shadow:4px 4px 0 var(--color-ink);padding:.85rem;">
-            <label style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:.4rem;">Gemini API Key (optional override)</label>
-            <div style="display:flex;gap:.5rem;">
-              <input id="ai-key-input" type="password" placeholder="AIzaSy..." style="flex:1;padding:.4rem .6rem;border:2px solid var(--color-ink);font-size:.75rem;font-family:'Space Mono',monospace;" />
-              <button id="ai-key-save" type="button" style="padding:.4rem .75rem;background:var(--color-ink);color:var(--color-canvas);border:none;cursor:pointer;font-weight:900;font-size:.7rem;text-transform:uppercase;">Save</button>
-            </div>
-          </div>
-          <!-- Describe -->
-          <div style="background:var(--color-white);border:var(--border-heavy);box-shadow:4px 4px 0 var(--color-ink);padding:.85rem;">
-            <p style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin:0 0 .5rem;">Describe Board</p>
-            <p style="font-size:.72rem;font-family:'Space Mono',monospace;opacity:.6;margin:0 0 .75rem;line-height:1.4;">Ask Gemini to describe what's drawn on your board.</p>
-            <button id="ai-describe-btn" type="button" style="width:100%;padding:.6rem;background:var(--color-muted);border:var(--border-heavy);box-shadow:4px 4px 0 var(--color-ink);font-weight:900;font-size:.75rem;text-transform:uppercase;cursor:pointer;">Describe Board</button>
-          </div>
-          <!-- Generate diagram -->
-          <div style="background:var(--color-white);border:var(--border-heavy);box-shadow:4px 4px 0 var(--color-ink);padding:.85rem;">
-            <p style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin:0 0 .5rem;">Generate Diagram</p>
-            <textarea id="ai-gen-prompt" rows="2" placeholder="e.g. A flowchart with 3 boxes and arrows..." style="width:100%;padding:.4rem .6rem;border:2px solid var(--color-ink);font-size:.78rem;font-family:'Space Mono',monospace;resize:vertical;box-sizing:border-box;margin-bottom:.5rem;"></textarea>
-            <button id="ai-generate-btn" type="button" style="width:100%;padding:.6rem;background:var(--color-sea);border:var(--border-heavy);box-shadow:4px 4px 0 var(--color-ink);font-weight:900;font-size:.75rem;text-transform:uppercase;cursor:pointer;">Generate &amp; Draw</button>
-          </div>
-          <!-- Summarize chat -->
-          <div style="background:var(--color-white);border:var(--border-heavy);box-shadow:4px 4px 0 var(--color-ink);padding:.85rem;">
-            <p style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin:0 0 .5rem;">Summarize Chat</p>
-            <p style="font-size:.72rem;font-family:'Space Mono',monospace;opacity:.6;margin:0 0 .75rem;line-height:1.4;">Summarize the board's chat conversation.</p>
-            <button id="ai-summarize-btn" type="button" style="width:100%;padding:.6rem;background:var(--color-secondary);border:var(--border-heavy);box-shadow:4px 4px 0 var(--color-ink);font-weight:900;font-size:.75rem;text-transform:uppercase;cursor:pointer;">Summarize Chat</button>
-          </div>
-          <!-- Loading + output -->
-          <div id="ai-loading" hidden style="text-align:center;padding:.5rem;font-size:.75rem;font-family:'Space Mono',monospace;opacity:.6;"><i class="fa-solid fa-circle-notch fa-spin"></i> Thinking...</div>
-          <div id="ai-output" style="background:var(--color-white);border:2px dashed rgba(0,0,0,.2);padding:.85rem;font-size:.78rem;font-family:'Space Mono',monospace;line-height:1.5;min-height:3rem;white-space:pre-wrap;"></div>
-        </div>
-      </aside>
+  <section class="float-panel float-panel--wide" id="ai-panel" hidden aria-label="AI Assistant">
+    <div class="float-panel-header">
+      <h2 class="float-panel-title"><i class="fa-solid fa-brain"
+          style="color:var(--color-sea);margin-right:.4rem;"></i>Brainy</h2>
+      <button class="icon-close-btn" id="ai-close" type="button" aria-label="Close AI panel">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div style="margin-bottom:1rem;border-bottom:var(--border-heavy);padding-bottom:0.75rem;">
+      <p
+        style="font-size:var(--font-size-xs);font-weight:var(--font-weight-black);text-transform:uppercase;margin:0 0 4px;color:var(--color-sea);">
+        AI Assistant</p>
+      <p style="font-size:var(--font-size-xs);margin:0;opacity:0.8;line-height:1.4;">I'm Brainy, your AI-powered
+        academic assistant. I'm here to help you with your studies and research.</p>
+    </div>
+    <div id="ai-response"
+      style="height:300px;overflow-y:auto;padding:.75rem;display:flex;flex-direction:column;gap:.75rem;border:var(--border-heavy);background:var(--color-white);margin-bottom:1rem;background-image:var(--pattern-halftone-light);background-size:12px 12px;">
+    </div>
+    <div style="display:flex;gap:.5rem;align-items:center;">
+      <textarea id="ai-prompt" class="text-input" rows="1" placeholder="Ask Brainy..."
+        style="flex:1;resize:none;padding:.5rem .75rem;" aria-label="AI prompt"></textarea>
+      <button id="ai-generate-btn" type="button" class="tool-btn"
+        style="background:var(--color-sea);color:var(--color-white);border:var(--border-heavy);box-shadow:2px 2px 0 var(--color-ink);"
+        aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  </section>
 
-      <!-- ═══════════════════════════════════════════
+  <!-- ═══════════════════════════════════════════
            REPLAY PANEL
       ═══════════════════════════════════════════ -->
-      <aside id="replay-panel" hidden aria-label="Replay" style="
+  <aside id="replay-panel" hidden aria-label="Replay" style="
         position:fixed;top:0;right:0;bottom:0;width:300px;z-index:500;
         background:var(--color-canvas);border-left:var(--border-heavy);
         display:flex;flex-direction:column;
         background-image:linear-gradient(to right,rgba(0,0,0,.06) 1px,transparent 1px),linear-gradient(to bottom,rgba(0,0,0,.06) 1px,transparent 1px);
         background-size:24px 24px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.1rem;border-bottom:var(--border-heavy);background:var(--color-accent);">
-          <span style="font-size:.8rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;"><i class="fa-solid fa-clapperboard" style="margin-right:.4rem;"></i>Replay</span>
-          <button id="replay-close" type="button" style="background:none;border:none;cursor:pointer;font-size:1rem;padding:.2rem;" aria-label="Close replay"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div style="padding:1.25rem;display:flex;flex-direction:column;gap:1rem;">
-          <p style="font-size:.72rem;font-family:'Space Mono',monospace;opacity:.6;margin:0;line-height:1.5;">Watch strokes be replayed in the order they were drawn.</p>
-          <!-- Progress -->
-          <div style="background:var(--color-white);border:var(--border-heavy);box-shadow:4px 4px 0 var(--color-ink);padding:.85rem;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:.5rem;">
-              <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;">Progress</span>
-              <span id="replay-counter" style="font-size:.65rem;font-family:'Space Mono',monospace;">0 / 0</span>
-            </div>
-            <progress id="replay-progress" value="0" max="100" style="width:100%;height:.75rem;border:2px solid var(--color-ink);"></progress>
-          </div>
-          <!-- Speed -->
-          <div style="background:var(--color-white);border:var(--border-heavy);box-shadow:4px 4px 0 var(--color-ink);padding:.85rem;">
-            <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:.5rem;">Speed</span>
-            <div style="display:flex;gap:.5rem;">
-              <button id="replay-speed-1" type="button" class="is-active" style="flex:1;padding:.4rem;border:var(--border-heavy);background:var(--color-secondary);font-weight:900;font-size:.75rem;cursor:pointer;">1×</button>
-              <button id="replay-speed-2" type="button" style="flex:1;padding:.4rem;border:var(--border-heavy);background:var(--color-white);font-weight:900;font-size:.75rem;cursor:pointer;">2×</button>
-              <button id="replay-speed-4" type="button" style="flex:1;padding:.4rem;border:var(--border-heavy);background:var(--color-white);font-weight:900;font-size:.75rem;cursor:pointer;">4×</button>
-            </div>
-          </div>
-          <!-- Controls -->
-          <div style="display:flex;gap:.75rem;">
-            <button id="replay-play" type="button" style="flex:1;padding:.75rem;background:var(--color-ink);color:var(--color-canvas);border:var(--border-heavy);box-shadow:var(--shadow-hard);font-weight:900;font-size:.8rem;text-transform:uppercase;cursor:pointer;transition:transform .12s,box-shadow .12s;">
-              <i class="fa-solid fa-play"></i> Play
-            </button>
-            <button id="replay-stop" type="button" style="padding:.75rem 1rem;background:var(--color-white);border:var(--border-heavy);box-shadow:var(--shadow-hard);font-weight:900;font-size:.8rem;cursor:pointer;transition:transform .12s,box-shadow .12s;">
-              <i class="fa-solid fa-stop"></i>
-            </button>
-          </div>
-        </div>
-      </aside>
-
+    <div
+      style="display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.1rem;border-bottom:var(--border-heavy);background:var(--color-accent);">
+      <span style="font-size:.8rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;"><i
+          class="fa-solid fa-clapperboard" style="margin-right:.4rem;"></i>Replay</span>
+      <button id="replay-close" type="button"
+        style="background:none;border:none;cursor:pointer;font-size:1rem;padding:.2rem;" aria-label="Close replay"><i
+          class="fa-solid fa-xmark"></i></button>
     </div>
+    <div style="padding:1.25rem;display:flex;flex-direction:column;gap:1rem;">
+      <p style="font-size:.72rem;font-family:'Space Mono',monospace;opacity:.6;margin:0;line-height:1.5;">Watch strokes
+        be replayed in the order they were drawn.</p>
+      <!-- Progress -->
+      <div
+        style="background:var(--color-white);border:var(--border-heavy);box-shadow:4px 4px 0 var(--color-ink);padding:.85rem;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:.5rem;">
+          <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;">Progress</span>
+          <span id="replay-counter" style="font-size:.65rem;font-family:'Space Mono',monospace;">0 / 0</span>
+        </div>
+        <progress id="replay-progress" value="0" max="100"
+          style="width:100%;height:.75rem;border:2px solid var(--color-ink);"></progress>
+      </div>
+      <!-- Speed -->
+      <div
+        style="background:var(--color-white);border:var(--border-heavy);box-shadow:4px 4px 0 var(--color-ink);padding:.85rem;">
+        <span
+          style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:.5rem;">Speed</span>
+        <div style="display:flex;gap:.5rem;">
+          <button id="replay-speed-1" type="button" class="is-active"
+            style="flex:1;padding:.4rem;border:var(--border-heavy);background:var(--color-secondary);font-weight:900;font-size:.75rem;cursor:pointer;">1×</button>
+          <button id="replay-speed-2" type="button"
+            style="flex:1;padding:.4rem;border:var(--border-heavy);background:var(--color-white);font-weight:900;font-size:.75rem;cursor:pointer;">2×</button>
+          <button id="replay-speed-4" type="button"
+            style="flex:1;padding:.4rem;border:var(--border-heavy);background:var(--color-white);font-weight:900;font-size:.75rem;cursor:pointer;">4×</button>
+        </div>
+      </div>
+      <!-- Controls -->
+      <div style="display:flex;gap:.75rem;">
+        <button id="replay-play" type="button"
+          style="flex:1;padding:.75rem;background:var(--color-ink);color:var(--color-canvas);border:var(--border-heavy);box-shadow:var(--shadow-hard);font-weight:900;font-size:.8rem;text-transform:uppercase;cursor:pointer;transition:transform .12s,box-shadow .12s;">
+          <i class="fa-solid fa-play"></i> Play
+        </button>
+        <button id="replay-stop" type="button"
+          style="padding:.75rem 1rem;background:var(--color-white);border:var(--border-heavy);box-shadow:var(--shadow-hard);font-weight:900;font-size:.8rem;cursor:pointer;transition:transform .12s,box-shadow .12s;">
+          <i class="fa-solid fa-stop"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
 
-    <!-- Socket.IO + runtime -->
-    <script src="/socket.io/socket.io.js"></script>
-    <script defer src="./js/chat.js"></script>
-    <script defer src="./js/ai.js"></script>
-    <script defer src="./js/board.runtime.js"></script>
+  </div>
 
-    <!-- ── Panel toggle (runs immediately — no socket dependency) ── -->
-    <script>
-      // Expose stored token for socket auth
-      window.__slateToken = localStorage.getItem('slateboard.token') || '';
+  <!-- Socket.IO + runtime -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script defer src="./js/chat.js"></script>
+  <script defer src="./js/ai.js"></script>
+  <script defer src="./js/board.runtime.js"></script>
 
-      (function () {
-        var panels = {
-          chat:   { btn: 'chat-toggle',   panel: 'chat-panel',   close: 'chat-close'   },
-          ai:     { btn: 'ai-toggle',     panel: 'ai-panel',     close: 'ai-close'     }
-        };
+  <!-- ── Panel toggle (runs immediately — no socket dependency) ── -->
+  <script>
+    // Expose stored token for socket auth
+    window.__slateToken = localStorage.getItem('slateboard.token') || '';
 
-        var current = null;
+    (function () {
+      var panels = {
+        chat: { btn: 'chat-toggle', panel: 'chat-panel', close: 'chat-close' },
+        ai: { btn: 'ai-toggle', panel: 'ai-panel', close: 'ai-close' }
+      };
 
-        function openPanel(name) {
-          // close any open panel
-          if (current && current !== name) {
-            var prev = panels[current];
-            document.getElementById(prev.panel).hidden = true;
-            document.getElementById(prev.btn).setAttribute('aria-expanded', 'false');
-          }
-          current = name;
-          var cfg = panels[name];
-          var panel = document.getElementById(cfg.panel);
-          var isOpen = !panel.hidden;
-          panel.hidden = isOpen;
-          document.getElementById(cfg.btn).setAttribute('aria-expanded', String(!isOpen));
-          if (isOpen) current = null;
+      var current = null;
+
+      function openPanel(name) {
+        // close any open panel
+        if (current && current !== name) {
+          var prev = panels[current];
+          document.getElementById(prev.panel).hidden = true;
+          document.getElementById(prev.btn).setAttribute('aria-expanded', 'false');
+        }
+        current = name;
+        var cfg = panels[name];
+        var panel = document.getElementById(cfg.panel);
+        var isOpen = !panel.hidden;
+        panel.hidden = isOpen;
+        document.getElementById(cfg.btn).setAttribute('aria-expanded', String(!isOpen));
+        if (isOpen) current = null;
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        // Show dashboard link if logged in
+        if (window.__slateToken) {
+          var dashLink = document.getElementById('dashboard-nav-link');
+          if (dashLink) dashLink.hidden = false;
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-          // Show dashboard link if logged in
-          if (window.__slateToken) {
-            var dashLink = document.getElementById('dashboard-nav-link');
-            if (dashLink) dashLink.hidden = false;
-          }
-
-          Object.keys(panels).forEach(function (name) {
-            var cfg = panels[name];
-            var btn = document.getElementById(cfg.btn);
-            var closeBtn = document.getElementById(cfg.close);
-            if (btn) btn.addEventListener('click', function () { openPanel(name); });
-            if (closeBtn) closeBtn.addEventListener('click', function () {
-              document.getElementById(cfg.panel).hidden = true;
-              document.getElementById(cfg.btn).setAttribute('aria-expanded', 'false');
-              current = null;
-            });
+        Object.keys(panels).forEach(function (name) {
+          var cfg = panels[name];
+          var btn = document.getElementById(cfg.btn);
+          var closeBtn = document.getElementById(cfg.close);
+          if (btn) btn.addEventListener('click', function () { openPanel(name); });
+          if (closeBtn) closeBtn.addEventListener('click', function () {
+            document.getElementById(cfg.panel).hidden = true;
+            document.getElementById(cfg.btn).setAttribute('aria-expanded', 'false');
+            current = null;
           });
         });
-      })();
-    </script>
+      });
+    })();
+  </script>
 
-    <a href="https://github.com/priyanshukamal26/slateboard" target="_blank" rel="noopener noreferrer" class="github-float-btn" aria-label="View original GitHub repository" title="GitHub Repository">
-      <i class="fa-brands fa-github"></i>
-    </a>
-  </body>
+  <a href="https://github.com/priyanshukamal26/slateboard" target="_blank" rel="noopener noreferrer"
+    class="github-float-btn" aria-label="View original GitHub repository" title="GitHub Repository">
+    <i class="fa-brands fa-github"></i>
+  </a>
+</body>
+
 </html>

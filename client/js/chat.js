@@ -20,6 +20,8 @@
     this.sendBtn = document.getElementById("chat-send-btn");
     this.badge = document.getElementById("chat-badge");
     this.typingEl = document.getElementById("chat-typing");
+    this.fileInput = document.getElementById("chat-file-input");
+    this.uploadBtn = document.getElementById("chat-upload-btn");
 
     if (!this.panel || !this.socket) return;
 
@@ -41,6 +43,10 @@
     }
     if (this.sendBtn) {
       this.sendBtn.addEventListener("click", () => self._send());
+    }
+    if (this.uploadBtn && this.fileInput) {
+      this.uploadBtn.addEventListener("click", () => self.fileInput.click());
+      this.fileInput.addEventListener("change", (e) => self._handleFileUpload(e));
     }
     if (this.input) {
       this.input.addEventListener("keydown", (e) => {
@@ -103,6 +109,47 @@
     if (this.input) this.input.value = "";
   };
 
+  ChatController.prototype._handleFileUpload = async function (e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    // Optional: show a loading state on the upload button
+    const originalBtnContent = this.uploadBtn.innerHTML;
+    this.uploadBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+    this.uploadBtn.disabled = true;
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/v1/chat/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error("Upload failed");
+
+      const data = await response.json();
+
+      // Send message with file info
+      this.socket.emit("chat:send", {
+        boardId: this.boardId,
+        token: window.__slateToken || "",
+        guestId: localStorage.getItem("slateboard.guestId") || "",
+        fileUrl: data.url,
+        fileName: data.name,
+        fileType: data.type,
+      });
+    } catch (error) {
+      console.error("[chat] file upload error:", error);
+      alert("Failed to upload file. Please try again.");
+    } finally {
+      this.uploadBtn.innerHTML = originalBtnContent;
+      this.uploadBtn.disabled = false;
+      this.fileInput.value = ""; // clear for next time
+    }
+  };
+
   ChatController.prototype._appendMessage = function (msg) {
     if (!this.messageList) return;
 
@@ -121,7 +168,19 @@
         <span class="chat-msg-name" style="color:${msg.color || "#ff6b6b"}">${escapeHtml(msg.displayName || "Guest")}</span>
         <span class="chat-msg-time">${time}</span>
       </div>
-      <div class="chat-msg-text">${escapeHtml(msg.text)}</div>`;
+      ${msg.text ? `<div class="chat-msg-text">${escapeHtml(msg.text)}</div>` : ""}
+      ${
+        msg.fileUrl
+          ? `
+        <div class="chat-msg-file" style="margin-top:4px;">
+          <a href="${msg.fileUrl}" download="${msg.fileName}" class="chat-file-download" style="display:inline-flex;align-items:center;gap:8px;padding:8px 12px;background:var(--color-white);border:2px solid var(--color-ink);color:var(--color-ink);text-decoration:none;font-size:0.75rem;font-weight:600;box-shadow:2px 2px 0 var(--color-ink);">
+            <i class="fa-solid ${getFileIcon(msg.fileType)}"></i>
+            <span style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(msg.fileName)}</span>
+            <i class="fa-solid fa-download" style="opacity:0.6;font-size:0.7rem;"></i>
+          </a>
+        </div>`
+          : ""
+      }`;
 
     this.messageList.appendChild(el);
     this.messageList.scrollTop = this.messageList.scrollHeight;
@@ -144,6 +203,22 @@
       /[&<>"']/g,
       (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]
     );
+  }
+
+  function getFileIcon(mimeType) {
+    if (!mimeType) return "fa-file";
+    if (mimeType.startsWith("image/")) return "fa-file-image";
+    if (mimeType.startsWith("video/")) return "fa-file-video";
+    if (mimeType.startsWith("audio/")) return "fa-file-audio";
+    if (mimeType.includes("pdf")) return "fa-file-pdf";
+    if (mimeType.includes("word") || mimeType.includes("officedocument.wordprocessingml"))
+      return "fa-file-word";
+    if (mimeType.includes("excel") || mimeType.includes("officedocument.spreadsheetml"))
+      return "fa-file-excel";
+    if (mimeType.includes("powerpoint") || mimeType.includes("officedocument.presentationml"))
+      return "fa-file-powerpoint";
+    if (mimeType.includes("zip") || mimeType.includes("archive")) return "fa-file-zipper";
+    return "fa-file";
   }
 
   window.ChatController = ChatController;
