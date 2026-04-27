@@ -4,7 +4,6 @@ This document outlines the planned trajectory for Slateboard development.
 
 ## 🟢 Short-term (1–2 Months)
 *   **Board Sharing Permissions**: Implement granular control over who can view vs. edit a board (Owner, Editor, Viewer roles).
-*   **Version History Playback**: Reintroduce the **Replay Engine** (currently in `future_features.md`) with a refined UI slider to playback board creation.
 *   **Enhanced AI (Brainy)**: Integrate more diverse models and improve context-gathering to provide even more accurate academic assistance.
 *   **Mobile Web Optimization**: Refine the canvas interaction for touch devices and small screens.
 

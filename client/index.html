@@ -1,2028 +1,2224 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Slateboard — Canvas First Whiteboard for Teachers & Students</title>
-    <meta name="description" content="Slateboard is a draw-first virtual whiteboard for teachers and students. Sketch immediately, collaborate in real-time, and annotate lessons with zero friction." />
-    <meta name="keywords" content="virtual whiteboard, online whiteboard, teachers, students, collaborative learning, drawing, annotation" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./css/tokens.css" />
-    <link rel="stylesheet" href="./css/base.css" />
-    <link rel="stylesheet" href="./css/components.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Slateboard — Canvas First Whiteboard for Teachers & Students</title>
+  <meta name="description"
+    content="Slateboard is a draw-first virtual whiteboard for teachers and students. Sketch immediately, collaborate in real-time, and annotate lessons with zero friction." />
+  <meta name="keywords"
+    content="virtual whiteboard, online whiteboard, teachers, students, collaborative learning, drawing, annotation" />
 
-    <style>
-      /* ===== RESET & LANDING OVERRIDES ===== */
-      :root {
-        --color-canvas: #fffdf5;
-        --color-accent: #ff6b6b;
-        --color-secondary: #ffd93d;
-        --color-muted: #c4b5fd;
-        --color-ink: #000000;
-        --color-white: #ffffff;
-        --color-sea: #2ec4b6;
-        --color-green: #06d6a0;
-        --border-heavy: 4px solid var(--color-ink);
-        --shadow-hard: 8px 8px 0 var(--color-ink);
-        --shadow-hard-lg: 12px 12px 0 var(--color-ink);
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="./css/tokens.css" />
+  <link rel="stylesheet" href="./css/base.css" />
+  <link rel="stylesheet" href="./css/components.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    /* ===== RESET & LANDING OVERRIDES ===== */
+    :root {
+      --color-canvas: #fffdf5;
+      --color-accent: #ff6b6b;
+      --color-secondary: #ffd93d;
+      --color-muted: #c4b5fd;
+      --color-ink: #000000;
+      --color-white: #ffffff;
+      --color-sea: #2ec4b6;
+      --color-green: #06d6a0;
+      --border-heavy: 4px solid var(--color-ink);
+      --shadow-hard: 8px 8px 0 var(--color-ink);
+      --shadow-hard-lg: 12px 12px 0 var(--color-ink);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body.landing-body {
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* ===== NAV ===== */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2.5rem;
+      background: var(--color-canvas);
+      border-bottom: var(--border-heavy);
+      box-shadow: 0 4px 0 var(--color-ink);
+      background-image:
+        linear-gradient(to right, rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .nav-logo-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.35rem 0.75rem;
+      background: var(--color-secondary);
+      border: var(--border-heavy);
+      box-shadow: 4px 4px 0 var(--color-ink);
+      font-size: 1rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-ink);
+      white-space: nowrap;
+    }
+
+    .nav-tagline {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.6;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-link {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-ink);
+      text-decoration: none;
+      padding: 0.4rem 0.75rem;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      transition: border-color 0.12s, background 0.12s;
+    }
+
+    .nav-link:hover {
+      border-color: var(--color-secondary);
+      background: var(--color-secondary);
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1.25rem;
+      font-size: 0.8rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border: var(--border-heavy);
+      box-shadow: 4px 4px 0 var(--color-ink);
+      background: var(--color-accent);
+      color: var(--color-ink);
+      text-decoration: none;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .nav-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--color-ink);
+    }
+
+    .nav-btn:active {
+      transform: translate(4px, 4px);
+      box-shadow: none;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 7rem 2.5rem 4rem;
+      gap: 3rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      background: var(--color-muted);
+      border: var(--border-heavy);
+      box-shadow: 4px 4px 0 var(--color-ink);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      width: fit-content;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--color-accent);
+      border: 2px solid var(--color-ink);
+      border-radius: 50%;
+      animation: dot-pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes dot-pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
       }
 
-      html { scroll-behavior: smooth; }
+      50% {
+        transform: scale(1.4);
+      }
+    }
 
-      body.landing-body {
-        padding: 0;
-        overflow-x: hidden;
+    .hero-title {
+      font-size: clamp(3.5rem, 9vw, 7.5rem);
+      font-weight: 900;
+      line-height: 0.9;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .hero-title-line {
+      display: block;
+      overflow: hidden;
+    }
+
+    .hero-title-word {
+      display: inline-block;
+    }
+
+    .hero-title-accent {
+      color: var(--color-accent);
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero-title-accent::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: var(--color-secondary);
+      border: 2px solid var(--color-ink);
+      transform: skewX(-8deg);
+    }
+
+    .hero-subtitle {
+      font-size: 1.15rem;
+      font-weight: 500;
+      line-height: 1.5;
+      max-width: 32rem;
+      margin-bottom: 2rem;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    .btn-hero-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 1rem 2rem;
+      background: var(--color-accent);
+      border: var(--border-heavy);
+      box-shadow: var(--shadow-hard);
+      font-size: 1rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-ink);
+      text-decoration: none;
+      transition: transform 0.12s, box-shadow 0.12s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-hero-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--color-secondary);
+      transform: translateX(-100%);
+      transition: transform 0.2s;
+    }
+
+    .btn-hero-primary:hover::before {
+      transform: translateX(0);
+    }
+
+    .btn-hero-primary:hover {
+      transform: translate(-4px, -4px);
+      box-shadow: 12px 12px 0 var(--color-ink);
+    }
+
+    .btn-hero-primary:active {
+      transform: translate(4px, 4px);
+      box-shadow: none;
+    }
+
+    .btn-hero-primary span,
+    .btn-hero-primary i {
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-hero-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 1rem 2rem;
+      background: var(--color-white);
+      border: var(--border-heavy);
+      box-shadow: var(--shadow-hard);
+      font-size: 1rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-ink);
+      text-decoration: none;
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+
+    .btn-hero-secondary:hover {
+      transform: translate(-4px, -4px);
+      box-shadow: 12px 12px 0 var(--color-ink);
+      background: var(--color-secondary);
+    }
+
+    .btn-hero-secondary:active {
+      transform: translate(4px, 4px);
+      box-shadow: none;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2rem;
+      padding-top: 1.5rem;
+      border-top: var(--border-heavy);
+    }
+
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .hero-stat-num {
+      font-size: 1.8rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .hero-stat-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.6;
+    }
+
+    /* ===== HERO CANVAS DEMO ===== */
+    .hero-right {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-canvas-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .hero-canvas-frame {
+      background: var(--color-white);
+      border: var(--border-heavy);
+      box-shadow: var(--shadow-hard-lg);
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-canvas-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      background: var(--color-canvas);
+      border: var(--border-heavy);
+      box-shadow: 4px 4px 0 var(--color-ink);
+      margin-bottom: 1rem;
+    }
+
+    .hero-tool-btn {
+      width: 2rem;
+      height: 2rem;
+      border: 2px solid var(--color-ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      background: var(--color-white);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .hero-tool-btn.active {
+      background: var(--color-accent);
+    }
+
+    .hero-canvas-area {
+      background: var(--color-white);
+      border: var(--border-heavy);
+      height: 280px;
+      position: relative;
+      background-image:
+        linear-gradient(to right, rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+      background-size: 28px 28px;
+      overflow: hidden;
+    }
+
+    .hero-canvas-svg {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+    }
+
+    .hero-canvas-badge {
+      position: absolute;
+      top: -14px;
+      right: 16px;
+      background: var(--color-secondary);
+      border: var(--border-heavy);
+      box-shadow: 4px 4px 0 var(--color-ink);
+      padding: 0.25rem 0.75rem;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .hero-canvas-cursor {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+    }
+
+    .hero-floating-label {
+      position: absolute;
+      background: var(--color-muted);
+      border: var(--border-heavy);
+      box-shadow: 4px 4px 0 var(--color-ink);
+      padding: 0.4rem 0.75rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .hero-float-1 {
+      top: -20px;
+      left: -20px;
+      background: var(--color-accent);
+      transform: rotate(-3deg);
+    }
+
+    .hero-float-2 {
+      bottom: 20px;
+      right: -30px;
+      background: var(--color-sea);
+      transform: rotate(2deg);
+    }
+
+    .hero-float-3 {
+      bottom: -20px;
+      left: 40px;
+      background: var(--color-secondary);
+      transform: rotate(-1deg);
+    }
+
+    /* ===== MARQUEE STRIP ===== */
+    .marquee-strip {
+      background: var(--color-ink);
+      color: var(--color-secondary);
+      border-top: var(--border-heavy);
+      border-bottom: var(--border-heavy);
+      padding: 0.85rem 0;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .marquee-inner {
+      display: inline-flex;
+      gap: 0;
+      animation: marquee-scroll 20s linear infinite;
+    }
+
+    .marquee-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0 2rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .marquee-item::after {
+      content: '★';
+      color: var(--color-accent);
+    }
+
+    @keyframes marquee-scroll {
+      from {
+        transform: translateX(0);
       }
 
-      /* ===== NAV ===== */
-      .nav {
-        position: fixed;
-        top: 0; left: 0; right: 0;
-        z-index: 100;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1rem 2.5rem;
-        background: var(--color-canvas);
-        border-bottom: var(--border-heavy);
-        box-shadow: 0 4px 0 var(--color-ink);
-        background-image:
-          linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px);
-        background-size: 32px 32px;
+      to {
+        transform: translateX(-50%);
       }
+    }
 
-      .nav-logo {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        text-decoration: none;
-      }
+    /* ===== SECTION SHARED ===== */
+    .section {
+      padding: 6rem 2.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
 
-      .nav-logo-badge {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.35rem 0.75rem;
-        background: var(--color-secondary);
-        border: var(--border-heavy);
-        box-shadow: 4px 4px 0 var(--color-ink);
-        font-size: 1rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--color-ink);
-        white-space: nowrap;
-      }
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.3rem 0.75rem;
+      background: var(--color-ink);
+      color: var(--color-secondary);
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 1.25rem;
+    }
 
-      .nav-tagline {
-        font-size: 0.7rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        opacity: 0.6;
-      }
+    .section-title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 0.95;
+      margin-bottom: 1rem;
+    }
 
-      .nav-links {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-      }
+    .section-subtitle {
+      font-size: 1rem;
+      font-family: 'Space Mono', monospace;
+      max-width: 40rem;
+      line-height: 1.6;
+      opacity: 0.75;
+    }
 
-      .nav-link {
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: var(--color-ink);
-        text-decoration: none;
-        padding: 0.4rem 0.75rem;
-        border: 2px solid rgba(255,255,255,0.85);
-        transition: border-color 0.12s, background 0.12s;
-      }
+    /* ===== FEATURES SECTION ===== */
+    .features-section {
+      background: var(--color-ink);
+      padding: 6rem 0;
+      border-top: var(--border-heavy);
+      border-bottom: var(--border-heavy);
+    }
 
-      .nav-link:hover {
-        border-color: var(--color-secondary);
-        background: var(--color-secondary);
-      }
+    .features-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2.5rem;
+    }
 
-      .nav-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 0.5rem 1.25rem;
-        font-size: 0.8rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        border: var(--border-heavy);
-        box-shadow: 4px 4px 0 var(--color-ink);
-        background: var(--color-accent);
-        color: var(--color-ink);
-        text-decoration: none;
-        transition: transform 0.1s, box-shadow 0.1s;
-      }
+    .features-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 4rem;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
 
-      .nav-btn:hover {
-        transform: translate(-2px, -2px);
-        box-shadow: 6px 6px 0 var(--color-ink);
-      }
+    .features-header .section-label {
+      background: var(--color-secondary);
+      color: var(--color-ink);
+    }
 
-      .nav-btn:active {
-        transform: translate(4px, 4px);
-        box-shadow: none;
-      }
+    .features-header .section-title {
+      color: var(--color-canvas);
+    }
 
-      /* ===== HERO ===== */
+    .features-header .section-subtitle {
+      color: var(--color-canvas);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--color-canvas);
+      border: var(--border-heavy);
+      box-shadow: var(--shadow-hard);
+      padding: 2rem;
+      position: relative;
+      cursor: default;
+      transition: transform 0.15s, box-shadow 0.15s;
+      overflow: hidden;
+    }
+
+    .feature-card:hover {
+      transform: translate(-4px, -4px);
+      box-shadow: var(--shadow-hard-lg);
+    }
+
+    .feature-card-bg {
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      font-size: 5rem;
+      opacity: 0.07;
+      pointer-events: none;
+      font-weight: 900;
+    }
+
+    .feature-card-num {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--color-ink);
+      opacity: 0.4;
+      margin-bottom: 1rem;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .feature-icon-wrap {
+      width: 3.5rem;
+      height: 3.5rem;
+      border: var(--border-heavy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 1.25rem;
+      flex-shrink: 0;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .feature-card:hover .feature-icon-wrap {
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 var(--color-ink);
+    }
+
+    .feature-card-title {
+      font-size: 1.2rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .feature-card-desc {
+      font-size: 0.875rem;
+      line-height: 1.55;
+      font-family: 'Space Mono', monospace;
+      font-weight: 400;
+      opacity: 0.8;
+    }
+
+    .feature-card-tag {
+      display: inline-flex;
+      margin-top: 1.25rem;
+      padding: 0.2rem 0.6rem;
+      border: 2px solid var(--color-ink);
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ===== HOW IT WORKS ===== */
+    .how-section {
+      padding: 6rem 2.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .how-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 4rem;
+      position: relative;
+    }
+
+    .how-step {
+      padding: 2rem 1.5rem;
+      border: var(--border-heavy);
+      margin-left: -4px;
+      background: var(--color-white);
+      position: relative;
+      transition: transform 0.15s, box-shadow 0.15s, z-index 0s;
+    }
+
+    .how-step:first-child {
+      margin-left: 0;
+    }
+
+    .how-step:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hard-lg);
+      z-index: 2;
+      background: var(--color-secondary);
+    }
+
+    .how-step-num {
+      font-size: 3.5rem;
+      font-weight: 900;
+      line-height: 1;
+      opacity: 0.12;
+      font-family: 'Space Mono', monospace;
+      margin-bottom: 0.5rem;
+    }
+
+    .how-step-icon {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .how-step-title {
+      font-size: 1rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .how-step-desc {
+      font-size: 0.8rem;
+      line-height: 1.5;
+      font-family: 'Space Mono', monospace;
+      opacity: 0.75;
+    }
+
+    .how-connector {
+      position: absolute;
+      top: 50%;
+      right: -1px;
+      width: 2rem;
+      height: 2px;
+      background: var(--color-accent);
+      z-index: 3;
+      display: none;
+    }
+
+    /* ===== TOOLS SHOWCASE ===== */
+    .tools-section {
+      background: var(--color-secondary);
+      border-top: var(--border-heavy);
+      border-bottom: var(--border-heavy);
+      padding: 6rem 2.5rem;
+    }
+
+    .tools-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      margin-top: 4rem;
+    }
+
+    .tools-list {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .tool-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: var(--color-white);
+      border: var(--border-heavy);
+      box-shadow: 4px 4px 0 var(--color-ink);
+      cursor: default;
+      transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
+    }
+
+    .tool-item:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 7px 7px 0 var(--color-ink);
+      background: var(--color-muted);
+    }
+
+    .tool-item-icon {
+      font-size: 1.5rem;
+      width: 2.5rem;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .tool-item-name {
+      font-size: 0.9rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .tool-item-desc {
+      font-size: 0.72rem;
+      font-family: 'Space Mono', monospace;
+      opacity: 0.7;
+      margin-top: 0.15rem;
+    }
+
+    .tools-canvas-preview {
+      background: var(--color-white);
+      border: var(--border-heavy);
+      box-shadow: var(--shadow-hard-lg);
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    .tools-canvas-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.75rem;
+      background: var(--color-ink);
+      color: var(--color-canvas);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .tools-canvas-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-accent);
+      animation: dot-pulse 2s ease-in-out infinite;
+    }
+
+    .tools-mini-canvas {
+      background: #f8f5e9;
+      border: 2px solid var(--color-ink);
+      height: 300px;
+      position: relative;
+      background-image:
+        linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+      background-size: 24px 24px;
+      overflow: hidden;
+    }
+
+    /* ===== USE CASES ===== */
+    .usecases-section {
+      padding: 6rem 2.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .usecases-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 4rem;
+    }
+
+    .usecase-card {
+      padding: 2rem;
+      border: var(--border-heavy);
+      box-shadow: var(--shadow-hard);
+      background: var(--color-white);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .usecase-card:nth-child(1) {
+      background: var(--color-muted);
+    }
+
+    .usecase-card:nth-child(2) {
+      background: var(--color-secondary);
+    }
+
+    .usecase-card:nth-child(3) {
+      background: var(--color-sea);
+    }
+
+    .usecase-card:hover {
+      transform: translate(-4px, -4px);
+      box-shadow: var(--shadow-hard-lg);
+    }
+
+    .usecase-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1.25rem;
+      display: block;
+    }
+
+    .usecase-title {
+      font-size: 1.25rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .usecase-desc {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      font-family: 'Space Mono', monospace;
+      opacity: 0.8;
+    }
+
+    .usecase-features {
+      list-style: none;
+      padding: 0;
+      margin: 1.25rem 0 0;
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    .usecase-features li {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .usecase-features li::before {
+      content: '→';
+      font-weight: 900;
+    }
+
+    /* ===== CTA SECTION ===== */
+    .cta-section {
+      margin: 0 2.5rem 6rem;
+      background: var(--color-accent);
+      border: var(--border-heavy);
+      box-shadow: var(--shadow-hard-lg);
+      padding: 5rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 3rem;
+    }
+
+    .cta-title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 0.95;
+      margin-bottom: 1rem;
+    }
+
+    .cta-subtitle {
+      font-size: 1rem;
+      font-family: 'Space Mono', monospace;
+      opacity: 0.8;
+      max-width: 32rem;
+    }
+
+    .cta-bg-text {
+      position: absolute;
+      bottom: -2rem;
+      right: -1rem;
+      font-size: 10rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      opacity: 0.08;
+      pointer-events: none;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .cta-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+
+    .btn-cta-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 1.1rem 2.25rem;
+      background: var(--color-ink);
+      color: var(--color-canvas);
+      border: var(--border-heavy);
+      box-shadow: var(--shadow-hard);
+      font-size: 1rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+
+    .btn-cta-primary:hover {
+      transform: translate(-4px, -4px);
+      box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-cta-primary:active {
+      transform: translate(4px, 4px);
+      box-shadow: none;
+    }
+
+    .btn-cta-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 1.1rem 2.25rem;
+      background: var(--color-white);
+      color: var(--color-ink);
+      border: var(--border-heavy);
+      box-shadow: var(--shadow-hard);
+      font-size: 1rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+
+    .btn-cta-secondary:hover {
+      transform: translate(-4px, -4px);
+      box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-cta-secondary:active {
+      transform: translate(4px, 4px);
+      box-shadow: none;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      background: var(--color-ink);
+      color: var(--color-canvas);
+      border-top: var(--border-heavy);
+      padding: 4rem 2.5rem 2rem;
+    }
+
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.5fr;
+      gap: 3rem;
+      padding-bottom: 3rem;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+      margin-bottom: 2rem;
+    }
+
+    .footer-brand-logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.4rem 1rem;
+      background: var(--color-secondary);
+      border: var(--border-heavy);
+      box-shadow: 4px 4px 0 rgba(255, 255, 255, 0.3);
+      font-size: 1.1rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: var(--color-ink);
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .footer-brand-desc {
+      font-size: 0.82rem;
+      font-family: 'Space Mono', monospace;
+      line-height: 1.6;
+      opacity: 0.65;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .footer-social-link {
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: var(--color-canvas);
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: background 0.12s, border-color 0.12s, transform 0.12s;
+    }
+
+    .footer-social-link:hover {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      transform: translateY(-3px);
+    }
+
+    .footer-col-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--color-secondary);
+      margin-bottom: 1.25rem;
+    }
+
+    .footer-links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 0.6rem;
+    }
+
+    .footer-links a {
+      font-size: 0.85rem;
+      font-family: 'Space Mono', monospace;
+      color: var(--color-canvas);
+      text-decoration: none;
+      opacity: 0.7;
+      transition: opacity 0.1s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .footer-links a:hover {
+      opacity: 1;
+    }
+
+    .footer-links a::before {
+      content: '→';
+      font-size: 0.7rem;
+      opacity: 0.5;
+    }
+
+    /* Team */
+    .footer-team-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 1.25rem;
+    }
+
+    .footer-team-member {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .footer-team-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-team-links {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .footer-team-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.6rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--color-canvas);
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      transition: background 0.12s, border-color 0.12s;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .footer-team-link:hover {
+      background: var(--color-muted);
+      border-color: var(--color-muted);
+      color: var(--color-ink);
+    }
+
+    .footer-team-link-placeholder {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.6rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-family: 'Space Mono', monospace;
+      cursor: default;
+    }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-copy {
+      font-size: 0.72rem;
+      font-family: 'Space Mono', monospace;
+      opacity: 0.5;
+    }
+
+    .footer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.75rem;
+      background: var(--color-secondary);
+      border: 2px solid var(--color-secondary);
+      color: var(--color-ink);
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ===== SCROLL REVEAL INITIAL STATE ===== */
+    .sr {
+      opacity: 0;
+    }
+
+    /* ===== CURSOR TRAIL ===== */
+    .cursor-trail {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      width: 12px;
+      height: 12px;
+      background: var(--color-accent);
+      border: 2px solid var(--color-ink);
+      transform: translate(-50%, -50%);
+    }
+
+    /* ===== NOISE OVERLAY ===== */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 200px 200px;
+      z-index: 9998;
+    }
+
+    /* ===== RESPONSIVENESS ===== */
+    @media (max-width: 1024px) {
       .hero {
-        min-height: 100vh;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        align-items: center;
-        padding: 7rem 2.5rem 4rem;
-        gap: 3rem;
-        max-width: 1400px;
-        margin: 0 auto;
+        grid-template-columns: 1fr;
+        padding-top: 6rem;
       }
 
-      .hero-left {
-        display: flex;
-        flex-direction: column;
-        gap: 0;
-      }
-
-      .hero-eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.35rem 0.85rem;
-        background: var(--color-muted);
-        border: var(--border-heavy);
-        box-shadow: 4px 4px 0 var(--color-ink);
-        font-size: 0.72rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        width: fit-content;
-        margin-bottom: 1.5rem;
-      }
-
-      .hero-eyebrow-dot {
-        width: 8px; height: 8px;
-        background: var(--color-accent);
-        border: 2px solid var(--color-ink);
-        border-radius: 50%;
-        animation: dot-pulse 1.5s ease-in-out infinite;
-      }
-
-      @keyframes dot-pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.4); }
-      }
-
-      .hero-title {
-        font-size: clamp(3.5rem, 9vw, 7.5rem);
-        font-weight: 900;
-        line-height: 0.9;
-        text-transform: uppercase;
-        letter-spacing: -0.02em;
-        margin-bottom: 1.5rem;
-        position: relative;
-      }
-
-      .hero-title-line {
-        display: block;
-        overflow: hidden;
-      }
-
-      .hero-title-word {
-        display: inline-block;
-      }
-
-      .hero-title-accent {
-        color: var(--color-accent);
-        position: relative;
-        display: inline-block;
-      }
-
-      .hero-title-accent::after {
-        content: '';
-        position: absolute;
-        bottom: 4px;
-        left: 0; right: 0;
-        height: 6px;
-        background: var(--color-secondary);
-        border: 2px solid var(--color-ink);
-        transform: skewX(-8deg);
-      }
-
-      .hero-subtitle {
-        font-size: 1.15rem;
-        font-weight: 500;
-        line-height: 1.5;
-        max-width: 32rem;
-        margin-bottom: 2rem;
-        font-family: 'Space Mono', monospace;
-      }
-
-      .hero-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        margin-bottom: 3rem;
-      }
-
-      .btn-hero-primary {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.6rem;
-        padding: 1rem 2rem;
-        background: var(--color-accent);
-        border: var(--border-heavy);
-        box-shadow: var(--shadow-hard);
-        font-size: 1rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: var(--color-ink);
-        text-decoration: none;
-        transition: transform 0.12s, box-shadow 0.12s;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .btn-hero-primary::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: var(--color-secondary);
-        transform: translateX(-100%);
-        transition: transform 0.2s;
-      }
-
-      .btn-hero-primary:hover::before { transform: translateX(0); }
-      .btn-hero-primary:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0 var(--color-ink); }
-      .btn-hero-primary:active { transform: translate(4px, 4px); box-shadow: none; }
-
-      .btn-hero-primary span, .btn-hero-primary i { position: relative; z-index: 1; }
-
-      .btn-hero-secondary {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.6rem;
-        padding: 1rem 2rem;
-        background: var(--color-white);
-        border: var(--border-heavy);
-        box-shadow: var(--shadow-hard);
-        font-size: 1rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: var(--color-ink);
-        text-decoration: none;
-        transition: transform 0.12s, box-shadow 0.12s;
-      }
-
-      .btn-hero-secondary:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0 var(--color-ink); background: var(--color-secondary); }
-      .btn-hero-secondary:active { transform: translate(4px, 4px); box-shadow: none; }
-
-      .hero-stats {
-        display: flex;
-        gap: 2rem;
-        padding-top: 1.5rem;
-        border-top: var(--border-heavy);
-      }
-
-      .hero-stat {
-        display: flex;
-        flex-direction: column;
-        gap: 0.2rem;
-      }
-
-      .hero-stat-num {
-        font-size: 1.8rem;
-        font-weight: 900;
-        line-height: 1;
-      }
-
-      .hero-stat-label {
-        font-size: 0.68rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        opacity: 0.6;
-      }
-
-      /* ===== HERO CANVAS DEMO ===== */
       .hero-right {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .hero-canvas-wrap {
-        position: relative;
-        width: 100%;
-        max-width: 520px;
-      }
-
-      .hero-canvas-frame {
-        background: var(--color-white);
-        border: var(--border-heavy);
-        box-shadow: var(--shadow-hard-lg);
-        padding: 1.5rem;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .hero-canvas-toolbar {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem;
-        background: var(--color-canvas);
-        border: var(--border-heavy);
-        box-shadow: 4px 4px 0 var(--color-ink);
-        margin-bottom: 1rem;
-      }
-
-      .hero-tool-btn {
-        width: 2rem; height: 2rem;
-        border: 2px solid var(--color-ink);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.75rem;
-        background: var(--color-white);
-        cursor: pointer;
-        transition: background 0.1s;
-      }
-
-      .hero-tool-btn.active { background: var(--color-accent); }
-
-      .hero-canvas-area {
-        background: var(--color-white);
-        border: var(--border-heavy);
-        height: 280px;
-        position: relative;
-        background-image:
-          linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px);
-        background-size: 28px 28px;
-        overflow: hidden;
-      }
-
-      .hero-canvas-svg {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        inset: 0;
-      }
-
-      .hero-canvas-badge {
-        position: absolute;
-        top: -14px;
-        right: 16px;
-        background: var(--color-secondary);
-        border: var(--border-heavy);
-        box-shadow: 4px 4px 0 var(--color-ink);
-        padding: 0.25rem 0.75rem;
-        font-size: 0.65rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-      }
-
-      .hero-canvas-cursor {
-        position: absolute;
-        width: 20px;
-        height: 20px;
-        pointer-events: none;
-      }
-
-      .hero-floating-label {
-        position: absolute;
-        background: var(--color-muted);
-        border: var(--border-heavy);
-        box-shadow: 4px 4px 0 var(--color-ink);
-        padding: 0.4rem 0.75rem;
-        font-size: 0.7rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        white-space: nowrap;
-      }
-
-      .hero-float-1 { top: -20px; left: -20px; background: var(--color-accent); transform: rotate(-3deg); }
-      .hero-float-2 { bottom: 20px; right: -30px; background: var(--color-sea); transform: rotate(2deg); }
-      .hero-float-3 { bottom: -20px; left: 40px; background: var(--color-secondary); transform: rotate(-1deg); }
-
-      /* ===== MARQUEE STRIP ===== */
-      .marquee-strip {
-        background: var(--color-ink);
-        color: var(--color-secondary);
-        border-top: var(--border-heavy);
-        border-bottom: var(--border-heavy);
-        padding: 0.85rem 0;
-        overflow: hidden;
-        white-space: nowrap;
-        position: relative;
-      }
-
-      .marquee-inner {
-        display: inline-flex;
-        gap: 0;
-        animation: marquee-scroll 20s linear infinite;
-      }
-
-      .marquee-item {
-        display: inline-flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 0 2rem;
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-      }
-
-      .marquee-item::after {
-        content: '★';
-        color: var(--color-accent);
-      }
-
-      @keyframes marquee-scroll {
-        from { transform: translateX(0); }
-        to { transform: translateX(-50%); }
-      }
-
-      /* ===== SECTION SHARED ===== */
-      .section {
-        padding: 6rem 2.5rem;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-      .section-label {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.3rem 0.75rem;
-        background: var(--color-ink);
-        color: var(--color-secondary);
-        font-size: 0.68rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.14em;
-        margin-bottom: 1.25rem;
-      }
-
-      .section-title {
-        font-size: clamp(2rem, 5vw, 3.5rem);
-        font-weight: 900;
-        text-transform: uppercase;
-        line-height: 0.95;
-        margin-bottom: 1rem;
-      }
-
-      .section-subtitle {
-        font-size: 1rem;
-        font-family: 'Space Mono', monospace;
-        max-width: 40rem;
-        line-height: 1.6;
-        opacity: 0.75;
-      }
-
-      /* ===== FEATURES SECTION ===== */
-      .features-section {
-        background: var(--color-ink);
-        padding: 6rem 0;
-        border-top: var(--border-heavy);
-        border-bottom: var(--border-heavy);
-      }
-
-      .features-inner {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 0 2.5rem;
-      }
-
-      .features-header {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        margin-bottom: 4rem;
-        gap: 2rem;
-        flex-wrap: wrap;
-      }
-
-      .features-header .section-label {
-        background: var(--color-secondary);
-        color: var(--color-ink);
-      }
-
-      .features-header .section-title {
-        color: var(--color-canvas);
-      }
-
-      .features-header .section-subtitle {
-        color: var(--color-canvas);
-      }
-
-      .features-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1.5rem;
-      }
-
-      .feature-card {
-        background: var(--color-canvas);
-        border: var(--border-heavy);
-        box-shadow: var(--shadow-hard);
-        padding: 2rem;
-        position: relative;
-        cursor: default;
-        transition: transform 0.15s, box-shadow 0.15s;
-        overflow: hidden;
-      }
-
-      .feature-card:hover {
-        transform: translate(-4px, -4px);
-        box-shadow: var(--shadow-hard-lg);
-      }
-
-      .feature-card-bg {
-        position: absolute;
-        top: -20px; right: -20px;
-        font-size: 5rem;
-        opacity: 0.07;
-        pointer-events: none;
-        font-weight: 900;
-      }
-
-      .feature-card-num {
-        font-size: 0.65rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        color: var(--color-ink);
-        opacity: 0.4;
-        margin-bottom: 1rem;
-        font-family: 'Space Mono', monospace;
-      }
-
-      .feature-icon-wrap {
-        width: 3.5rem;
-        height: 3.5rem;
-        border: var(--border-heavy);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.4rem;
-        margin-bottom: 1.25rem;
-        flex-shrink: 0;
-        transition: transform 0.1s, box-shadow 0.1s;
-      }
-
-      .feature-card:hover .feature-icon-wrap {
-        transform: translate(-2px, -2px);
-        box-shadow: 4px 4px 0 var(--color-ink);
-      }
-
-      .feature-card-title {
-        font-size: 1.2rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        margin-bottom: 0.75rem;
-      }
-
-      .feature-card-desc {
-        font-size: 0.875rem;
-        line-height: 1.55;
-        font-family: 'Space Mono', monospace;
-        font-weight: 400;
-        opacity: 0.8;
-      }
-
-      .feature-card-tag {
-        display: inline-flex;
-        margin-top: 1.25rem;
-        padding: 0.2rem 0.6rem;
-        border: 2px solid var(--color-ink);
-        font-size: 0.62rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-      }
-
-      /* ===== HOW IT WORKS ===== */
-      .how-section {
-        padding: 6rem 2.5rem;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-      .how-steps {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 0;
-        margin-top: 4rem;
-        position: relative;
-      }
-
-      .how-step {
-        padding: 2rem 1.5rem;
-        border: var(--border-heavy);
-        margin-left: -4px;
-        background: var(--color-white);
-        position: relative;
-        transition: transform 0.15s, box-shadow 0.15s, z-index 0s;
-      }
-
-      .how-step:first-child { margin-left: 0; }
-
-      .how-step:hover {
-        transform: translateY(-8px);
-        box-shadow: var(--shadow-hard-lg);
-        z-index: 2;
-        background: var(--color-secondary);
-      }
-
-      .how-step-num {
-        font-size: 3.5rem;
-        font-weight: 900;
-        line-height: 1;
-        opacity: 0.12;
-        font-family: 'Space Mono', monospace;
-        margin-bottom: 0.5rem;
-      }
-
-      .how-step-icon {
-        font-size: 1.75rem;
-        margin-bottom: 1rem;
-      }
-
-      .how-step-title {
-        font-size: 1rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        margin-bottom: 0.5rem;
-      }
-
-      .how-step-desc {
-        font-size: 0.8rem;
-        line-height: 1.5;
-        font-family: 'Space Mono', monospace;
-        opacity: 0.75;
-      }
-
-      .how-connector {
-        position: absolute;
-        top: 50%;
-        right: -1px;
-        width: 2rem;
-        height: 2px;
-        background: var(--color-accent);
-        z-index: 3;
         display: none;
       }
 
-      /* ===== TOOLS SHOWCASE ===== */
-      .tools-section {
-        background: var(--color-secondary);
-        border-top: var(--border-heavy);
-        border-bottom: var(--border-heavy);
-        padding: 6rem 2.5rem;
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
 
-      .tools-inner {
-        max-width: 1400px;
-        margin: 0 auto;
+      .how-steps {
+        grid-template-columns: repeat(2, 1fr);
       }
 
       .tools-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 4rem;
-        align-items: center;
-        margin-top: 4rem;
-      }
-
-      .tools-list {
-        display: grid;
-        gap: 1rem;
-      }
-
-      .tool-item {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 1rem 1.25rem;
-        background: var(--color-white);
-        border: var(--border-heavy);
-        box-shadow: 4px 4px 0 var(--color-ink);
-        cursor: default;
-        transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
-      }
-
-      .tool-item:hover {
-        transform: translate(-3px, -3px);
-        box-shadow: 7px 7px 0 var(--color-ink);
-        background: var(--color-muted);
-      }
-
-      .tool-item-icon {
-        font-size: 1.5rem;
-        width: 2.5rem;
-        text-align: center;
-        flex-shrink: 0;
-      }
-
-      .tool-item-name {
-        font-size: 0.9rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-      }
-
-      .tool-item-desc {
-        font-size: 0.72rem;
-        font-family: 'Space Mono', monospace;
-        opacity: 0.7;
-        margin-top: 0.15rem;
-      }
-
-      .tools-canvas-preview {
-        background: var(--color-white);
-        border: var(--border-heavy);
-        box-shadow: var(--shadow-hard-lg);
-        padding: 1.5rem;
-        position: relative;
-      }
-
-      .tools-canvas-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0.5rem 0.75rem;
-        background: var(--color-ink);
-        color: var(--color-canvas);
-        font-size: 0.7rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        margin-bottom: 1rem;
-      }
-
-      .tools-canvas-dot {
-        width: 8px; height: 8px;
-        border-radius: 50%;
-        background: var(--color-accent);
-        animation: dot-pulse 2s ease-in-out infinite;
-      }
-
-      .tools-mini-canvas {
-        background: #f8f5e9;
-        border: 2px solid var(--color-ink);
-        height: 300px;
-        position: relative;
-        background-image:
-          linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
-        background-size: 24px 24px;
-        overflow: hidden;
-      }
-
-      /* ===== USE CASES ===== */
-      .usecases-section {
-        padding: 6rem 2.5rem;
-        max-width: 1400px;
-        margin: 0 auto;
+        grid-template-columns: 1fr;
       }
 
       .usecases-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1.5rem;
-        margin-top: 4rem;
-      }
-
-      .usecase-card {
-        padding: 2rem;
-        border: var(--border-heavy);
-        box-shadow: var(--shadow-hard);
-        background: var(--color-white);
-        position: relative;
-        overflow: hidden;
-        transition: transform 0.15s, box-shadow 0.15s;
-      }
-
-      .usecase-card:nth-child(1) { background: var(--color-muted); }
-      .usecase-card:nth-child(2) { background: var(--color-secondary); }
-      .usecase-card:nth-child(3) { background: var(--color-sea); }
-
-      .usecase-card:hover {
-        transform: translate(-4px, -4px);
-        box-shadow: var(--shadow-hard-lg);
-      }
-
-      .usecase-icon {
-        font-size: 2.5rem;
-        margin-bottom: 1.25rem;
-        display: block;
-      }
-
-      .usecase-title {
-        font-size: 1.25rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        margin-bottom: 0.75rem;
-      }
-
-      .usecase-desc {
-        font-size: 0.85rem;
-        line-height: 1.6;
-        font-family: 'Space Mono', monospace;
-        opacity: 0.8;
-      }
-
-      .usecase-features {
-        list-style: none;
-        padding: 0;
-        margin: 1.25rem 0 0;
-        display: grid;
-        gap: 0.4rem;
-      }
-
-      .usecase-features li {
-        font-size: 0.78rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-
-      .usecase-features li::before {
-        content: '→';
-        font-weight: 900;
-      }
-
-      /* ===== CTA SECTION ===== */
-      .cta-section {
-        margin: 0 2.5rem 6rem;
-        background: var(--color-accent);
-        border: var(--border-heavy);
-        box-shadow: var(--shadow-hard-lg);
-        padding: 5rem 4rem;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .cta-inner {
-        max-width: 1400px;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: 1fr auto;
-        align-items: center;
-        gap: 3rem;
-      }
-
-      .cta-title {
-        font-size: clamp(2rem, 5vw, 3.5rem);
-        font-weight: 900;
-        text-transform: uppercase;
-        line-height: 0.95;
-        margin-bottom: 1rem;
-      }
-
-      .cta-subtitle {
-        font-size: 1rem;
-        font-family: 'Space Mono', monospace;
-        opacity: 0.8;
-        max-width: 32rem;
-      }
-
-      .cta-bg-text {
-        position: absolute;
-        bottom: -2rem;
-        right: -1rem;
-        font-size: 10rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        opacity: 0.08;
-        pointer-events: none;
-        line-height: 1;
-        letter-spacing: -0.04em;
-      }
-
-      .cta-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        flex-shrink: 0;
-      }
-
-      .btn-cta-primary {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.6rem;
-        padding: 1.1rem 2.25rem;
-        background: var(--color-ink);
-        color: var(--color-canvas);
-        border: var(--border-heavy);
-        box-shadow: var(--shadow-hard);
-        font-size: 1rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        text-decoration: none;
-        white-space: nowrap;
-        transition: transform 0.12s, box-shadow 0.12s;
-      }
-
-      .btn-cta-primary:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0 rgba(0,0,0,0.3); }
-      .btn-cta-primary:active { transform: translate(4px, 4px); box-shadow: none; }
-
-      .btn-cta-secondary {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.6rem;
-        padding: 1.1rem 2.25rem;
-        background: var(--color-white);
-        color: var(--color-ink);
-        border: var(--border-heavy);
-        box-shadow: var(--shadow-hard);
-        font-size: 1rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        text-decoration: none;
-        white-space: nowrap;
-        transition: transform 0.12s, box-shadow 0.12s;
-      }
-
-      .btn-cta-secondary:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0 rgba(0,0,0,0.3); }
-      .btn-cta-secondary:active { transform: translate(4px, 4px); box-shadow: none; }
-
-      /* ===== FOOTER ===== */
-      .footer {
-        background: var(--color-ink);
-        color: var(--color-canvas);
-        border-top: var(--border-heavy);
-        padding: 4rem 2.5rem 2rem;
-      }
-
-      .footer-inner {
-        max-width: 1400px;
-        margin: 0 auto;
+        grid-template-columns: 1fr;
       }
 
       .footer-top {
-        display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1.5fr;
-        gap: 3rem;
-        padding-bottom: 3rem;
-        border-bottom: 2px solid rgba(255,255,255,0.15);
-        margin-bottom: 2rem;
+        grid-template-columns: 1fr 1fr;
       }
 
-      .footer-brand-logo {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.4rem 1rem;
-        background: var(--color-secondary);
-        border: var(--border-heavy);
-        box-shadow: 4px 4px 0 rgba(255,255,255,0.3);
-        font-size: 1.1rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        color: var(--color-ink);
-        letter-spacing: 0.05em;
-        margin-bottom: 1rem;
+      .cta-inner {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav {
+        padding: 0.75rem 1.5rem;
       }
 
-      .footer-brand-desc {
-        font-size: 0.82rem;
-        font-family: 'Space Mono', monospace;
-        line-height: 1.6;
-        opacity: 0.65;
-        margin-bottom: 1.5rem;
+      .nav-links {
+        display: none;
       }
 
-      .footer-social {
-        display: flex;
-        gap: 0.75rem;
+      .hero {
+        padding: 5rem 1.5rem 3rem;
       }
 
-      .footer-social-link {
-        width: 2.5rem; height: 2.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: transparent;
-        border: 2px solid rgba(255,255,255,0.3);
-        color: var(--color-canvas);
-        font-size: 0.9rem;
-        text-decoration: none;
-        transition: background 0.12s, border-color 0.12s, transform 0.12s;
+      .section {
+        padding: 4rem 1.5rem;
       }
 
-      .footer-social-link:hover {
-        background: var(--color-accent);
-        border-color: var(--color-accent);
-        transform: translateY(-3px);
+      .features-grid {
+        grid-template-columns: 1fr;
       }
 
-      .footer-col-title {
-        font-size: 0.7rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.14em;
-        color: var(--color-secondary);
-        margin-bottom: 1.25rem;
+      .how-steps {
+        grid-template-columns: 1fr;
       }
 
-      .footer-links {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: grid;
-        gap: 0.6rem;
+      .footer-top {
+        grid-template-columns: 1fr;
       }
 
-      .footer-links a {
-        font-size: 0.85rem;
-        font-family: 'Space Mono', monospace;
-        color: var(--color-canvas);
-        text-decoration: none;
-        opacity: 0.7;
-        transition: opacity 0.1s;
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
+      .cta-section {
+        margin: 0 1.5rem 4rem;
+        padding: 3rem 2rem;
       }
 
-      .footer-links a:hover { opacity: 1; }
-      .footer-links a::before { content: '→'; font-size: 0.7rem; opacity: 0.5; }
-
-      /* Team */
-      .footer-team-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: grid;
-        gap: 1.25rem;
-      }
-
-      .footer-team-member {
-        display: flex;
-        flex-direction: column;
-        gap: 0.3rem;
-      }
-
-      .footer-team-name {
-        font-size: 0.85rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-
-      .footer-team-links {
-        display: flex;
-        gap: 0.5rem;
-      }
-
-      .footer-team-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-        padding: 0.2rem 0.6rem;
-        background: rgba(255,255,255,0.08);
-        border: 1px solid rgba(255,255,255,0.2);
-        color: var(--color-canvas);
-        font-size: 0.65rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        text-decoration: none;
-        transition: background 0.12s, border-color 0.12s;
-        font-family: 'Space Mono', monospace;
-      }
-
-      .footer-team-link:hover {
-        background: var(--color-muted);
-        border-color: var(--color-muted);
-        color: var(--color-ink);
-      }
-
-      .footer-team-link-placeholder {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-        padding: 0.2rem 0.6rem;
-        background: rgba(255,255,255,0.04);
-        border: 1px dashed rgba(255,255,255,0.2);
-        color: rgba(255,255,255,0.35);
-        font-size: 0.65rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        font-family: 'Space Mono', monospace;
-        cursor: default;
-      }
-
-      .footer-bottom {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
+      .hero-stats {
         flex-wrap: wrap;
+        gap: 1rem;
       }
+    }
+  </style>
+</head>
 
-      .footer-copy {
-        font-size: 0.72rem;
-        font-family: 'Space Mono', monospace;
-        opacity: 0.5;
-      }
+<body class="landing-body">
 
-      .footer-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 0.3rem 0.75rem;
-        background: var(--color-secondary);
-        border: 2px solid var(--color-secondary);
-        color: var(--color-ink);
-        font-size: 0.65rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-      }
+  <!-- Cursor trail element -->
+  <div class="cursor-trail" id="cursor-trail"></div>
 
-      /* ===== SCROLL REVEAL INITIAL STATE ===== */
-      .sr { opacity: 0; }
-
-      /* ===== CURSOR TRAIL ===== */
-      .cursor-trail {
-        position: fixed;
-        pointer-events: none;
-        z-index: 9999;
-        width: 12px; height: 12px;
-        background: var(--color-accent);
-        border: 2px solid var(--color-ink);
-        transform: translate(-50%, -50%);
-      }
-
-      /* ===== NOISE OVERLAY ===== */
-      body::after {
-        content: '';
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        opacity: 0.025;
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-        background-repeat: repeat;
-        background-size: 200px 200px;
-        z-index: 9998;
-      }
-
-      /* ===== RESPONSIVENESS ===== */
-      @media (max-width: 1024px) {
-        .hero { grid-template-columns: 1fr; padding-top: 6rem; }
-        .hero-right { display: none; }
-        .features-grid { grid-template-columns: repeat(2, 1fr); }
-        .how-steps { grid-template-columns: repeat(2, 1fr); }
-        .tools-grid { grid-template-columns: 1fr; }
-        .usecases-grid { grid-template-columns: 1fr; }
-        .footer-top { grid-template-columns: 1fr 1fr; }
-        .cta-inner { grid-template-columns: 1fr; }
-      }
-
-      @media (max-width: 640px) {
-        .nav { padding: 0.75rem 1.5rem; }
-        .nav-links { display: none; }
-        .hero { padding: 5rem 1.5rem 3rem; }
-        .section { padding: 4rem 1.5rem; }
-        .features-grid { grid-template-columns: 1fr; }
-        .how-steps { grid-template-columns: 1fr; }
-        .footer-top { grid-template-columns: 1fr; }
-        .cta-section { margin: 0 1.5rem 4rem; padding: 3rem 2rem; }
-        .hero-stats { flex-wrap: wrap; gap: 1rem; }
-      }
-    </style>
-  </head>
-  <body class="landing-body">
-
-    <!-- Cursor trail element -->
-    <div class="cursor-trail" id="cursor-trail"></div>
-
-    <!-- ===== NAVIGATION ===== -->
-    <nav class="nav" id="main-nav">
-      <a href="./index.html" class="nav-logo" aria-label="Slateboard home">
-        <div class="nav-logo-badge">Slateboard</div>
-        <span class="nav-tagline">Canvas First</span>
-      </a>
-      <div class="nav-links">
-        <a href="#features" class="nav-link">Features</a>
-        <a href="#how-it-works" class="nav-link">How It Works</a>
-        <a href="#tools" class="nav-link">Tools</a>
-        <a href="#use-cases" class="nav-link">Use Cases</a>
-        <a href="./auth.html" class="nav-link">Sign In</a>
-        <a href="./board.html" class="nav-btn"><i class="fa-solid fa-pen-nib"></i> Start Drawing</a>
-      </div>
-    </nav>
-
-    <!-- ===== HERO ===== -->
-    <section class="hero" id="hero">
-      <div class="hero-left">
-        <div class="hero-eyebrow sr" id="hero-eyebrow">
-          <span class="hero-eyebrow-dot"></span>
-          Canvas-first whiteboard
-        </div>
-        <h1 class="hero-title">
-          <span class="hero-title-line">
-            <span class="hero-title-word sr" id="hw1">Draw</span>
-          </span>
-          <span class="hero-title-line">
-            <span class="hero-title-word sr" id="hw2">Before</span>
-          </span>
-          <span class="hero-title-line">
-            <span class="hero-title-word sr hero-title-accent" id="hw3">You</span>
-            &nbsp;
-            <span class="hero-title-word sr" id="hw4">Think</span>
-          </span>
-        </h1>
-        <p class="hero-subtitle sr" id="hero-sub">
-          Slateboard is a draw-first virtual whiteboard built for teachers and students.
-          Sketch immediately, annotate lessons, and collaborate — no account wall in your way.
-        </p>
-        <div class="hero-actions sr" id="hero-actions">
-          <a class="btn-hero-primary" href="./board.html" id="hero-cta-draw">
-            <i class="fa-solid fa-pen-nib"></i>
-            <span>Start Drawing</span>
-          </a>
-          <a class="btn-hero-secondary" href="./auth.html" id="hero-cta-auth">
-            <i class="fa-solid fa-user"></i>
-            Sign In / Register
-          </a>
-        </div>
-        <div class="hero-stats sr" id="hero-stats">
-          <div class="hero-stat">
-            <span class="hero-stat-num" id="stat-tools">0</span>
-            <span class="hero-stat-label">Drawing Tools</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-num" id="stat-zero">0</span>
-            <span class="hero-stat-label">Account required</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-num" id="stat-local">∞</span>
-            <span class="hero-stat-label">Board History</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="hero-right">
-        <!-- Floating badges -->
-        <div class="hero-canvas-wrap">
-          <div class="hero-floating-label hero-float-1">Live Annotation</div>
-
-          <div class="hero-canvas-frame sr" id="hero-canvas">
-            <div class="hero-canvas-badge">Local — Auto Saved</div>
-            <div class="hero-canvas-toolbar">
-              <div class="hero-tool-btn active"><i class="fa-solid fa-pen"></i></div>
-              <div class="hero-tool-btn"><i class="fa-solid fa-eraser"></i></div>
-              <div class="hero-tool-btn"><i class="fa-solid fa-shapes"></i></div>
-              <div class="hero-tool-btn"><i class="fa-solid fa-minus"></i></div>
-              <div class="hero-tool-btn"><i class="fa-solid fa-circle"></i></div>
-              <div class="hero-tool-btn"><i class="fa-solid fa-font"></i></div>
-            </div>
-            <div class="hero-canvas-area" id="hero-canvas-area">
-              <svg class="hero-canvas-svg" id="hero-svg" viewBox="0 0 470 280" preserveAspectRatio="none">
-                <!-- Animated drawing paths -->
-                <path id="draw-path-1" d="M40,200 Q80,140 120,160 Q160,180 200,100 Q230,50 270,80" stroke="#000" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="500" stroke-dashoffset="500"/>
-                <path id="draw-path-2" d="M290,50 L350,120 L290,120 Z" stroke="#000" stroke-width="3" fill="none" stroke-dasharray="300" stroke-dashoffset="300"/>
-                <path id="draw-path-3" d="M380,100 m-35,0 a35,35 0 1,0 70,0 a35,35 0 1,0 -70,0" stroke="#ff6b6b" stroke-width="3" fill="rgba(255,107,107,0.15)" stroke-dasharray="220" stroke-dashoffset="220"/>
-                <path id="draw-path-4" d="M50,240 L120,220 L190,240 L260,215 L330,235" stroke="#2ec4b6" stroke-width="2.5" fill="none" stroke-dasharray="350" stroke-dashoffset="350" stroke-linecap="round"/>
-                <!-- Text annotation -->
-                <text id="draw-text-1" x="140" y="75" fill="#000" font-size="13" font-weight="700" font-family="Space Grotesk, sans-serif" text-transform="uppercase" opacity="0">KEY CONCEPT</text>
-                <line id="draw-line-1" x1="160" y1="82" x2="195" y2="100" stroke="#000" stroke-width="2" stroke-dasharray="50" stroke-dashoffset="50"/>
-              </svg>
-              <!-- Animated cursor dot -->
-              <div class="hero-canvas-cursor" id="hero-cursor" style="left:60px;top:180px;">
-                <svg viewBox="0 0 20 20"><path d="M0,0 L0,18 L5,14 L8,19 L10,18 L7,13 L13,13Z" fill="#000"/></svg>
-              </div>
-            </div>
-          </div>
-
-          <div class="hero-floating-label hero-float-2">Neo-Brutal Design</div>
-          <div class="hero-floating-label hero-float-3">Local-First Storage</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== MARQUEE ===== -->
-    <div class="marquee-strip">
-      <div class="marquee-inner" id="marquee-inner">
-        <span class="marquee-item">Draw instantly</span>
-        <span class="marquee-item">No account needed</span>
-        <span class="marquee-item">Neo-brutal canvas</span>
-        <span class="marquee-item">Local-first storage</span>
-        <span class="marquee-item">Real-time annotation</span>
-        <span class="marquee-item">Teacher-ready tools</span>
-        <span class="marquee-item">Student collaboration</span>
-        <span class="marquee-item">Freehand & shapes</span>
-        <span class="marquee-item">Zero friction</span>
-        <span class="marquee-item">Draw instantly</span>
-        <span class="marquee-item">No account needed</span>
-        <span class="marquee-item">Neo-brutal canvas</span>
-        <span class="marquee-item">Local-first storage</span>
-        <span class="marquee-item">Real-time annotation</span>
-        <span class="marquee-item">Teacher-ready tools</span>
-        <span class="marquee-item">Student collaboration</span>
-        <span class="marquee-item">Freehand & shapes</span>
-        <span class="marquee-item">Zero friction</span>
-      </div>
-    </div>
-
-    <!-- ===== FEATURES ===== -->
-    <section class="features-section" id="features">
-      <div class="features-inner">
-        <div class="features-header">
-          <div>
-            <div class="section-label">Why Slateboard</div>
-            <h2 class="section-title">Built Different.<br>Drawn Better.</h2>
-          </div>
-          <p class="section-subtitle">
-            Every feature is purpose-built for the classroom — raw, fast, and precise.
-            The canvas is always front and center.
-          </p>
-        </div>
-
-        <div class="features-grid">
-
-          <article class="feature-card sr" id="fc1">
-            <div class="feature-card-bg">⚡</div>
-            <div class="feature-card-num">01 / Feature</div>
-            <div class="feature-icon-wrap" style="background: #ffd93d;">
-              <i class="fa-solid fa-bolt"></i>
-            </div>
-            <h3 class="feature-card-title">Zero Friction Start</h3>
-            <p class="feature-card-desc">Open the board and sketch immediately. No account walls, no loading screens, no onboarding. The canvas is always ready.</p>
-            <span class="feature-card-tag" style="background: #ffd93d;">Instant access</span>
-          </article>
-
-          <article class="feature-card sr" id="fc2">
-            <div class="feature-card-bg">🎨</div>
-            <div class="feature-card-num">02 / Feature</div>
-            <div class="feature-icon-wrap" style="background: #c4b5fd;">
-              <i class="fa-solid fa-palette"></i>
-            </div>
-            <h3 class="feature-card-title">Neo-Brutal Canvas</h3>
-            <p class="feature-card-desc">Heavy borders, hard shadows, and loud tools built for clarity. A design system that makes every element unmissable from across the room.</p>
-            <span class="feature-card-tag" style="background: #c4b5fd;">Visual clarity</span>
-          </article>
-
-          <article class="feature-card sr" id="fc3">
-            <div class="feature-card-bg">💾</div>
-            <div class="feature-card-num">03 / Feature</div>
-            <div class="feature-icon-wrap" style="background: #2ec4b6;">
-              <i class="fa-solid fa-hard-drive"></i>
-            </div>
-            <h3 class="feature-card-title">Local-First Storage</h3>
-            <p class="feature-card-desc">Your board state and full undo/redo history survive refreshes, closures, and crashes. No cloud dependency. Your work stays yours.</p>
-            <span class="feature-card-tag" style="background: #2ec4b6;">Crash-proof</span>
-          </article>
-
-          <article class="feature-card sr" id="fc4">
-            <div class="feature-card-bg">✏️</div>
-            <div class="feature-card-num">04 / Feature</div>
-            <div class="feature-icon-wrap" style="background: #ff6b6b;">
-              <i class="fa-solid fa-pen-ruler"></i>
-            </div>
-            <h3 class="feature-card-title">Rich Drawing Tools</h3>
-            <p class="feature-card-desc">Freehand pen, shape tools (rect, circle, arrow), text, eraser, and a laser pointer. Every tool a teacher needs, nothing they don't.</p>
-            <span class="feature-card-tag" style="background: #ff6b6b;">12+ tools</span>
-          </article>
-
-          <article class="feature-card sr" id="fc5">
-            <div class="feature-card-bg">👥</div>
-            <div class="feature-card-num">05 / Feature</div>
-            <div class="feature-icon-wrap" style="background: #06d6a0;">
-              <i class="fa-solid fa-users"></i>
-            </div>
-            <h3 class="feature-card-title">Multi-Board Dashboard</h3>
-            <p class="feature-card-desc">Sign in to create, name, and manage multiple boards. Share with students via a unique link. Organized teaching at scale.</p>
-            <span class="feature-card-tag" style="background: #06d6a0;">Phase 2</span>
-          </article>
-
-          <article class="feature-card sr" id="fc6">
-            <div class="feature-card-bg">🖼️</div>
-            <div class="feature-card-num">06 / Feature</div>
-            <div class="feature-icon-wrap" style="background: #ffd93d;">
-              <i class="fa-solid fa-image"></i>
-            </div>
-            <h3 class="feature-card-title">Image Import</h3>
-            <p class="feature-card-desc">Drop any image onto the canvas. Annotate photographs, diagrams, or screenshots directly. Perfect for visual subjects and lab work.</p>
-            <span class="feature-card-tag" style="background: #ffd93d;">Drag & drop</span>
-          </article>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== HOW IT WORKS ===== -->
-    <section class="section how-section" id="how-it-works">
-      <div class="section-label">Process</div>
-      <h2 class="section-title">From Zero<br>to Drawing</h2>
-      <p class="section-subtitle">Four steps. No friction. Just the canvas.</p>
-
-      <div class="how-steps" id="how-steps-wrap">
-        <div class="how-step sr" id="hs1">
-          <div class="how-step-num">01</div>
-          <div class="how-step-icon">🌐</div>
-          <h3 class="how-step-title">Open the Board</h3>
-          <p class="how-step-desc">Navigate to Slateboard. The canvas loads instantly — no install, no plugin, no waiting.</p>
-        </div>
-        <div class="how-step sr" id="hs2">
-          <div class="how-step-num">02</div>
-          <div class="how-step-icon">✏️</div>
-          <h3 class="how-step-title">Pick Your Tool</h3>
-          <p class="how-step-desc">Select from pen, shapes, text, eraser, or arrow tools. Adjust stroke width and color in seconds.</p>
-        </div>
-        <div class="how-step sr" id="hs3">
-          <div class="how-step-num">03</div>
-          <div class="how-step-icon">🎨</div>
-          <h3 class="how-step-title">Sketch & Annotate</h3>
-          <p class="how-step-desc">Draw freehand, annotate images, write notes. Everything auto-saves locally as you work.</p>
-        </div>
-        <div class="how-step sr" id="hs4">
-          <div class="how-step-num">04</div>
-          <div class="how-step-icon">🤝</div>
-          <h3 class="how-step-title">Share & Collaborate</h3>
-          <p class="how-step-desc">Sign in to create named boards and share them with your class via a unique link.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== TOOLS SHOWCASE ===== -->
-    <div class="tools-section" id="tools">
-      <div class="tools-inner">
-        <div class="section-label">Toolbox</div>
-        <h2 class="section-title">Every Tool<br>You Need</h2>
-        <p class="section-subtitle">A precision toolkit for teaching diagrams, math problems, and live annotations.</p>
-
-        <div class="tools-grid">
-          <div class="tools-list" id="tools-list">
-            <div class="tool-item sr" id="ti1">
-              <div class="tool-item-icon">✏️</div>
-              <div>
-                <div class="tool-item-name">Freehand Pen</div>
-                <div class="tool-item-desc">Pressure-aware freesketch with smooth bezier curves</div>
-              </div>
-            </div>
-            <div class="tool-item sr" id="ti2">
-              <div class="tool-item-icon">⬜</div>
-              <div>
-                <div class="tool-item-name">Rectangles & Shapes</div>
-                <div class="tool-item-desc">Draw perfect rects and circles with border control</div>
-              </div>
-            </div>
-            <div class="tool-item sr" id="ti3">
-              <div class="tool-item-icon">→</div>
-              <div>
-                <div class="tool-item-name">Arrows & Lines</div>
-                <div class="tool-item-desc">Solid and dashed arrows for diagrams and flowcharts</div>
-              </div>
-            </div>
-            <div class="tool-item sr" id="ti4">
-              <div class="tool-item-icon">T</div>
-              <div>
-                <div class="tool-item-name">Text Labels</div>
-                <div class="tool-item-desc">Type anywhere on the canvas with font size control</div>
-              </div>
-            </div>
-            <div class="tool-item sr" id="ti5">
-              <div class="tool-item-icon">🖼️</div>
-              <div>
-                <div class="tool-item-name">Image Import</div>
-                <div class="tool-item-desc">Drag-drop images and annotate them directly</div>
-              </div>
-            </div>
-            <div class="tool-item sr" id="ti6">
-              <div class="tool-item-icon">⬛</div>
-              <div>
-                <div class="tool-item-name">Eraser & Undo</div>
-                <div class="tool-item-desc">Infinite undo/redo history survives page refresh</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="tools-canvas-preview sr" id="tools-canvas-preview">
-            <div class="tools-canvas-header">
-              <span>Slateboard Canvas</span>
-              <div style="display:flex;align-items:center;gap:0.5rem;">
-                <div class="tools-canvas-dot"></div>
-                <span>Local Board</span>
-              </div>
-            </div>
-            <div class="tools-mini-canvas">
-              <svg width="100%" height="100%" viewBox="0 0 440 300">
-                <!-- Example content on canvas -->
-                <rect x="30" y="40" width="120" height="80" fill="none" stroke="#000" stroke-width="3"/>
-                <circle cx="330" cy="90" r="55" fill="rgba(255,107,107,0.2)" stroke="#ff6b6b" stroke-width="3"/>
-                <line x1="150" y1="80" x2="270" y2="80" stroke="#000" stroke-width="2.5" marker-end="url(#ar)"/>
-                <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6Z" fill="#000"/></marker></defs>
-                <text x="35" y="95" fill="#000" font-size="13" font-weight="700" font-family="Space Grotesk">INPUT</text>
-                <text x="295" y="95" fill="#ff6b6b" font-size="13" font-weight="700" font-family="Space Grotesk">PROCESS</text>
-                <path d="M60,160 Q100,130 150,150 Q200,170 250,140 Q290,120 330,145" stroke="#2ec4b6" stroke-width="3" fill="none" stroke-linecap="round"/>
-                <text x="30" y="250" fill="#000" font-size="11" font-family="Space Mono, monospace" opacity="0.6">// annotation mode active</text>
-                <circle cx="380" cy="220" r="6" fill="#ffd93d" stroke="#000" stroke-width="2"/>
-                <circle cx="380" cy="220" r="18" fill="none" stroke="#ffd93d" stroke-width="2" stroke-dasharray="4 4"/>
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== USE CASES ===== -->
-    <section class="usecases-section" id="use-cases">
-      <div class="section-label">Built For</div>
-      <h2 class="section-title">Who Uses<br>Slateboard?</h2>
-      <p class="section-subtitle">From math tutors to CS professors — Slateboard fits any teaching or learning context.</p>
-
-      <div class="usecases-grid">
-        <article class="usecase-card sr" id="uc1">
-          <span class="usecase-icon">🧑‍🏫</span>
-          <h3 class="usecase-title">Teachers & Educators</h3>
-          <p class="usecase-desc">Deliver live lessons, draw diagrams on-the-fly, and annotate student work in real-time without setup overhead.</p>
-          <ul class="usecase-features">
-            <li>Live lecture diagrams</li>
-            <li>Problem solving walkthroughs</li>
-            <li>Lab diagram annotation</li>
-            <li>Exam prep boards</li>
-          </ul>
-        </article>
-
-        <article class="usecase-card sr" id="uc2">
-          <span class="usecase-icon">🧑‍🎓</span>
-          <h3 class="usecase-title">Students & Learners</h3>
-          <p class="usecase-desc">Sketch notes, diagram concepts, and organize your thoughts visually. Your board persists every session.</p>
-          <ul class="usecase-features">
-            <li>Visual note-taking</li>
-            <li>Concept mapping</li>
-            <li>Study group boards</li>
-            <li>Math problem solving</li>
-          </ul>
-        </article>
-
-        <article class="usecase-card sr" id="uc3">
-          <span class="usecase-icon">💡</span>
-          <h3 class="usecase-title">Ideas & Brainstorming</h3>
-          <p class="usecase-desc">Jump straight into sketching ideas without cluttered UIs. Raw, fast, and purpose-built for getting thoughts out.</p>
-          <ul class="usecase-features">
-            <li>Quick idea sketches</li>
-            <li>Wireframe drafts</li>
-            <li>Mind maps</li>
-            <li>Flow diagrams</li>
-          </ul>
-        </article>
-      </div>
-    </section>
-
-    <!-- ===== CTA ===== -->
-    <div class="cta-section" id="cta-section">
-      <div class="cta-bg-text">Draw</div>
-      <div class="cta-inner">
-        <div>
-          <h2 class="cta-title">The Canvas<br>Is Waiting.</h2>
-          <p class="cta-subtitle">No account. No setup. Just open the board and start drawing. Your ideas are one click away.</p>
-        </div>
-        <div class="cta-actions">
-          <a href="./board.html" class="btn-cta-primary" id="cta-draw-btn">
-            <i class="fa-solid fa-pen-nib"></i>
-            Open The Board
-          </a>
-          <a href="./auth.html" class="btn-cta-secondary" id="cta-auth-btn">
-            <i class="fa-solid fa-user-plus"></i>
-            Create Account
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== FOOTER ===== -->
-    <footer class="footer">
-      <div class="footer-inner">
-        <div class="footer-top">
-          <!-- Brand col -->
-          <div>
-            <div class="footer-brand-logo">Slateboard</div>
-            <p class="footer-brand-desc">
-              A draw-first virtual whiteboard for teachers and students.<br>
-              Built with neo-brutalist design and local-first philosophy.<br>
-              Canvas always front and center.
-            </p>
-            <div class="footer-social">
-              <a href="https://github.com/priyanshukamal26/slateboard" class="footer-social-link" target="_blank" rel="noopener" aria-label="GitHub">
-                <i class="fa-brands fa-github"></i>
-              </a>
-              <a href="./board.html" class="footer-social-link" aria-label="Open Board">
-                <i class="fa-solid fa-pen-nib"></i>
-              </a>
-            </div>
-          </div>
-
-          <!-- Product col -->
-          <div>
-            <div class="footer-col-title">Product</div>
-            <ul class="footer-links">
-              <li><a href="./board.html">Drawing Board</a></li>
-              <li><a href="./auth.html">Sign In</a></li>
-              <li><a href="./auth.html">Register</a></li>
-              <li><a href="./dashboard.html">Dashboard</a></li>
-              <li><a href="#features">Features</a></li>
-              <li><a href="#how-it-works">How It Works</a></li>
-            </ul>
-          </div>
-
-          <!-- Resources col -->
-          <div>
-            <div class="footer-col-title">Resources</div>
-            <ul class="footer-links">
-              <li><a href="https://github.com/priyanshukamal26/slateboard" target="_blank" rel="noopener">GitHub Repo</a></li>
-              <li><a href="#use-cases">Use Cases</a></li>
-              <li><a href="#tools">Tools Overview</a></li>
-            </ul>
-          </div>
-
-          <!-- Team col -->
-          <div>
-            <div class="footer-col-title">The Team</div>
-            <ul class="footer-team-list">
-              <li class="footer-team-member">
-                <div class="footer-team-name">Madhav Singla</div>
-                <div class="footer-team-links">
-                  <span class="footer-team-link-placeholder"><i class="fa-brands fa-linkedin"></i> LinkedIn</span>
-                  <span class="footer-team-link-placeholder"><i class="fa-brands fa-github"></i> GitHub</span>
-                </div>
-              </li>
-              <li class="footer-team-member">
-                <div class="footer-team-name">Priyanshu Kamal</div>
-                <div class="footer-team-links">
-                  <a href="https://www.linkedin.com/in/priyanshukamal/" class="footer-team-link" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
-                  <a href="https://github.com/priyanshukamal26/" class="footer-team-link" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i> GitHub</a>
-                </div>
-              </li>
-              <li class="footer-team-member">
-                <div class="footer-team-name">Shivani Butolia</div>
-                <div class="footer-team-links">
-                  <a href="https://www.linkedin.com/in/shivanibutolia/" class="footer-team-link" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
-                  <a href="https://github.com/shiva08b" class="footer-team-link" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i> GitHub</a>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="footer-bottom">
-          <p class="footer-copy">© 2025 Slateboard. Built with ♥ for teachers & students. Open source.</p>
-          <div class="footer-badge">
-            <i class="fa-solid fa-circle-dot" style="color: #06d6a0;"></i>
-            Phase 1 — Local First
-          </div>
-        </div>
-      </div>
-    </footer>
-
-    <!-- Floating GitHub btn -->
-    <a href="https://github.com/priyanshukamal26/slateboard" target="_blank" rel="noopener noreferrer" class="github-float-btn" aria-label="View GitHub repository" title="GitHub Repository">
-      <i class="fa-brands fa-github"></i>
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="nav" id="main-nav">
+    <a href="./index.html" class="nav-logo" aria-label="Slateboard home">
+      <div class="nav-logo-badge">Slateboard</div>
+      <span class="nav-tagline">Canvas First</span>
     </a>
+    <div class="nav-links">
+      <a href="#features" class="nav-link">Features</a>
+      <a href="#how-it-works" class="nav-link">How It Works</a>
+      <a href="#tools" class="nav-link">Tools</a>
+      <a href="#use-cases" class="nav-link">Use Cases</a>
+      <a href="./auth.html" class="nav-link">Sign In</a>
+      <a href="./board.html" class="nav-btn"><i class="fa-solid fa-pen-nib"></i> Start Drawing</a>
+    </div>
+  </nav>
 
-    <!-- ===== GSAP ===== -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow sr" id="hero-eyebrow">
+        <span class="hero-eyebrow-dot"></span>
+        Canvas-first whiteboard
+      </div>
+      <h1 class="hero-title">
+        <span class="hero-title-line">
+          <span class="hero-title-word sr" id="hw1">Sketch</span>
+        </span>
+        <span class="hero-title-line">
+          <span class="hero-title-word sr" id="hw2">First</span>
+        </span>
+        <span class="hero-title-line">
+          <span class="hero-title-word sr hero-title-accent" id="hw3">Understand</span>
+          <span class="hero-title-word sr" id="hw4">Faster</span>
+        </span>
+      </h1>
+      <p class="hero-subtitle sr" id="hero-sub">
+        Slateboard is a draw-first virtual whiteboard built for teachers and students.
+        Sketch immediately, annotate lessons, and collaborate — no account wall in your way.
+      </p>
+      <div class="hero-actions sr" id="hero-actions">
+        <a class="btn-hero-primary" href="./board.html" id="hero-cta-draw">
+          <i class="fa-solid fa-pen-nib"></i>
+          <span>Start Drawing</span>
+        </a>
+        <a class="btn-hero-secondary" href="./auth.html" id="hero-cta-auth">
+          <i class="fa-solid fa-user"></i>
+          Sign In / Register
+        </a>
+      </div>
+      <div class="hero-stats sr" id="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-num" id="stat-tools">0</span>
+          <span class="hero-stat-label">Drawing Tools</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num" id="stat-zero">0</span>
+          <span class="hero-stat-label">Account required</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num" id="stat-local">∞</span>
+          <span class="hero-stat-label">Board History</span>
+        </div>
+      </div>
+    </div>
 
-    <script>
-      // ===== GSAP SETUP =====
-      gsap.registerPlugin(ScrollTrigger, TextPlugin);
+    <div class="hero-right">
+      <!-- Floating badges -->
+      <div class="hero-canvas-wrap">
+        <div class="hero-floating-label hero-float-1">Live Annotation</div>
 
-      // ===== CURSOR TRAIL =====
-      const trail = document.getElementById('cursor-trail');
-      let mx = 0, my = 0;
-      document.addEventListener('mousemove', (e) => {
-        mx = e.clientX; my = e.clientY;
-        gsap.to(trail, { x: mx, y: my, duration: 0.15, ease: 'power2.out' });
+        <div class="hero-canvas-frame sr" id="hero-canvas">
+          <div class="hero-canvas-badge">Local — Auto Saved</div>
+          <div class="hero-canvas-toolbar">
+            <div class="hero-tool-btn active"><i class="fa-solid fa-pen"></i></div>
+            <div class="hero-tool-btn"><i class="fa-solid fa-eraser"></i></div>
+            <div class="hero-tool-btn"><i class="fa-solid fa-shapes"></i></div>
+            <div class="hero-tool-btn"><i class="fa-solid fa-minus"></i></div>
+            <div class="hero-tool-btn"><i class="fa-solid fa-circle"></i></div>
+            <div class="hero-tool-btn"><i class="fa-solid fa-font"></i></div>
+          </div>
+          <div class="hero-canvas-area" id="hero-canvas-area">
+            <svg class="hero-canvas-svg" id="hero-svg" viewBox="0 0 470 280" preserveAspectRatio="none">
+              <!-- Animated drawing paths -->
+              <path id="draw-path-1" d="M40,200 Q80,140 120,160 Q160,180 200,100 Q230,50 270,80" stroke="#000"
+                stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="500"
+                stroke-dashoffset="500" />
+              <path id="draw-path-2" d="M290,50 L350,120 L290,120 Z" stroke="#000" stroke-width="3" fill="none"
+                stroke-dasharray="300" stroke-dashoffset="300" />
+              <path id="draw-path-3" d="M380,100 m-35,0 a35,35 0 1,0 70,0 a35,35 0 1,0 -70,0" stroke="#ff6b6b"
+                stroke-width="3" fill="rgba(255,107,107,0.15)" stroke-dasharray="220" stroke-dashoffset="220" />
+              <path id="draw-path-4" d="M50,240 L120,220 L190,240 L260,215 L330,235" stroke="#2ec4b6" stroke-width="2.5"
+                fill="none" stroke-dasharray="350" stroke-dashoffset="350" stroke-linecap="round" />
+              <!-- Text annotation -->
+              <text id="draw-text-1" x="140" y="75" fill="#000" font-size="13" font-weight="700"
+                font-family="Space Grotesk, sans-serif" text-transform="uppercase" opacity="0">KEY CONCEPT</text>
+              <line id="draw-line-1" x1="160" y1="82" x2="195" y2="100" stroke="#000" stroke-width="2"
+                stroke-dasharray="50" stroke-dashoffset="50" />
+            </svg>
+            <!-- Animated cursor dot -->
+            <div class="hero-canvas-cursor" id="hero-cursor" style="left:60px;top:180px;">
+              <svg viewBox="0 0 20 20">
+                <path d="M0,0 L0,18 L5,14 L8,19 L10,18 L7,13 L13,13Z" fill="#000" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-floating-label hero-float-2">Neo-Brutal Design</div>
+        <div class="hero-floating-label hero-float-3">Local-First Storage</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MARQUEE ===== -->
+  <div class="marquee-strip">
+    <div class="marquee-inner" id="marquee-inner">
+      <span class="marquee-item">Draw instantly</span>
+      <span class="marquee-item">No account needed</span>
+      <span class="marquee-item">Neo-brutal canvas</span>
+      <span class="marquee-item">Local-first storage</span>
+      <span class="marquee-item">Real-time annotation</span>
+      <span class="marquee-item">Teacher-ready tools</span>
+      <span class="marquee-item">Student collaboration</span>
+      <span class="marquee-item">Freehand & shapes</span>
+      <span class="marquee-item">Zero friction</span>
+      <span class="marquee-item">Draw instantly</span>
+      <span class="marquee-item">No account needed</span>
+      <span class="marquee-item">Neo-brutal canvas</span>
+      <span class="marquee-item">Local-first storage</span>
+      <span class="marquee-item">Real-time annotation</span>
+      <span class="marquee-item">Teacher-ready tools</span>
+      <span class="marquee-item">Student collaboration</span>
+      <span class="marquee-item">Freehand & shapes</span>
+      <span class="marquee-item">Zero friction</span>
+    </div>
+  </div>
+
+  <!-- ===== FEATURES ===== -->
+  <section class="features-section" id="features">
+    <div class="features-inner">
+      <div class="features-header">
+        <div>
+          <div class="section-label">Why Slateboard</div>
+          <h2 class="section-title">Built Different.<br>Drawn Better.</h2>
+        </div>
+        <p class="section-subtitle">
+          Every feature is purpose-built for the classroom — raw, fast, and precise.
+          The canvas is always front and center.
+        </p>
+      </div>
+
+      <div class="features-grid">
+
+        <article class="feature-card sr" id="fc1">
+          <div class="feature-card-bg">⚡</div>
+          <div class="feature-card-num">01 / Feature</div>
+          <div class="feature-icon-wrap" style="background: #ffd93d;">
+            <i class="fa-solid fa-bolt"></i>
+          </div>
+          <h3 class="feature-card-title">Zero Friction Start</h3>
+          <p class="feature-card-desc">Open the board and sketch immediately. No account walls, no loading screens, no
+            onboarding. The canvas is always ready.</p>
+          <span class="feature-card-tag" style="background: #ffd93d;">Instant access</span>
+        </article>
+
+        <article class="feature-card sr" id="fc2">
+          <div class="feature-card-bg">🎨</div>
+          <div class="feature-card-num">02 / Feature</div>
+          <div class="feature-icon-wrap" style="background: #c4b5fd;">
+            <i class="fa-solid fa-palette"></i>
+          </div>
+          <h3 class="feature-card-title">Neo-Brutal Canvas</h3>
+          <p class="feature-card-desc">Heavy borders, hard shadows, and loud tools built for clarity. A design system
+            that makes every element unmissable from across the room.</p>
+          <span class="feature-card-tag" style="background: #c4b5fd;">Visual clarity</span>
+        </article>
+
+        <article class="feature-card sr" id="fc3">
+          <div class="feature-card-bg">💾</div>
+          <div class="feature-card-num">03 / Feature</div>
+          <div class="feature-icon-wrap" style="background: #2ec4b6;">
+            <i class="fa-solid fa-hard-drive"></i>
+          </div>
+          <h3 class="feature-card-title">Local-First Storage</h3>
+          <p class="feature-card-desc">Your board state and full undo/redo history survive refreshes, closures, and
+            crashes. No cloud dependency. Your work stays yours.</p>
+          <span class="feature-card-tag" style="background: #2ec4b6;">Crash-proof</span>
+        </article>
+
+        <article class="feature-card sr" id="fc4">
+          <div class="feature-card-bg">✏️</div>
+          <div class="feature-card-num">04 / Feature</div>
+          <div class="feature-icon-wrap" style="background: #ff6b6b;">
+            <i class="fa-solid fa-pen-ruler"></i>
+          </div>
+          <h3 class="feature-card-title">Rich Drawing Tools</h3>
+          <p class="feature-card-desc">Freehand pen, shape tools (rect, circle, arrow), text, eraser, and a laser
+            pointer. Every tool a teacher needs, nothing they don't.</p>
+          <span class="feature-card-tag" style="background: #ff6b6b;">12+ tools</span>
+        </article>
+
+        <article class="feature-card sr" id="fc5">
+          <div class="feature-card-bg">👥</div>
+          <div class="feature-card-num">05 / Feature</div>
+          <div class="feature-icon-wrap" style="background: #06d6a0;">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <h3 class="feature-card-title">Multi-Board Dashboard</h3>
+          <p class="feature-card-desc">Sign in to create, name, and manage multiple boards. Share with students via a
+            unique link. Organized teaching at scale.</p>
+          <span class="feature-card-tag" style="background: #06d6a0;">Phase 2</span>
+        </article>
+
+        <article class="feature-card sr" id="fc6">
+          <div class="feature-card-bg">🖼️</div>
+          <div class="feature-card-num">06 / Feature</div>
+          <div class="feature-icon-wrap" style="background: #ffd93d;">
+            <i class="fa-solid fa-image"></i>
+          </div>
+          <h3 class="feature-card-title">Image Import</h3>
+          <p class="feature-card-desc">Drop any image onto the canvas. Annotate photographs, diagrams, or screenshots
+            directly. Perfect for visual subjects and lab work.</p>
+          <span class="feature-card-tag" style="background: #ffd93d;">Drag & drop</span>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section class="section how-section" id="how-it-works">
+    <div class="section-label">Process</div>
+    <h2 class="section-title">From Zero<br>to Drawing</h2>
+    <p class="section-subtitle">Four steps. No friction. Just the canvas.</p>
+
+    <div class="how-steps" id="how-steps-wrap">
+      <div class="how-step sr" id="hs1">
+        <div class="how-step-num">01</div>
+        <div class="how-step-icon">🌐</div>
+        <h3 class="how-step-title">Open the Board</h3>
+        <p class="how-step-desc">Navigate to Slateboard. The canvas loads instantly — no install, no plugin, no waiting.
+        </p>
+      </div>
+      <div class="how-step sr" id="hs2">
+        <div class="how-step-num">02</div>
+        <div class="how-step-icon">✏️</div>
+        <h3 class="how-step-title">Pick Your Tool</h3>
+        <p class="how-step-desc">Select from pen, shapes, text, eraser, or arrow tools. Adjust stroke width and color in
+          seconds.</p>
+      </div>
+      <div class="how-step sr" id="hs3">
+        <div class="how-step-num">03</div>
+        <div class="how-step-icon">🎨</div>
+        <h3 class="how-step-title">Sketch & Annotate</h3>
+        <p class="how-step-desc">Draw freehand, annotate images, write notes. Everything auto-saves locally as you work.
+        </p>
+      </div>
+      <div class="how-step sr" id="hs4">
+        <div class="how-step-num">04</div>
+        <div class="how-step-icon">🤝</div>
+        <h3 class="how-step-title">Share & Collaborate</h3>
+        <p class="how-step-desc">Sign in to create named boards and share them with your class via a unique link.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TOOLS SHOWCASE ===== -->
+  <div class="tools-section" id="tools">
+    <div class="tools-inner">
+      <div class="section-label">Toolbox</div>
+      <h2 class="section-title">Every Tool<br>You Need</h2>
+      <p class="section-subtitle">A precision toolkit for teaching diagrams, math problems, and live annotations.</p>
+
+      <div class="tools-grid">
+        <div class="tools-list" id="tools-list">
+          <div class="tool-item sr" id="ti1">
+            <div class="tool-item-icon">✏️</div>
+            <div>
+              <div class="tool-item-name">Freehand Pen</div>
+              <div class="tool-item-desc">Pressure-aware freesketch with smooth bezier curves</div>
+            </div>
+          </div>
+          <div class="tool-item sr" id="ti2">
+            <div class="tool-item-icon">⬜</div>
+            <div>
+              <div class="tool-item-name">Rectangles & Shapes</div>
+              <div class="tool-item-desc">Draw perfect rects and circles with border control</div>
+            </div>
+          </div>
+          <div class="tool-item sr" id="ti3">
+            <div class="tool-item-icon">→</div>
+            <div>
+              <div class="tool-item-name">Arrows & Lines</div>
+              <div class="tool-item-desc">Solid and dashed arrows for diagrams and flowcharts</div>
+            </div>
+          </div>
+          <div class="tool-item sr" id="ti4">
+            <div class="tool-item-icon">T</div>
+            <div>
+              <div class="tool-item-name">Text Labels</div>
+              <div class="tool-item-desc">Type anywhere on the canvas with font size control</div>
+            </div>
+          </div>
+          <div class="tool-item sr" id="ti5">
+            <div class="tool-item-icon">🖼️</div>
+            <div>
+              <div class="tool-item-name">Image Import</div>
+              <div class="tool-item-desc">Drag-drop images and annotate them directly</div>
+            </div>
+          </div>
+          <div class="tool-item sr" id="ti6">
+            <div class="tool-item-icon">⬛</div>
+            <div>
+              <div class="tool-item-name">Eraser & Undo</div>
+              <div class="tool-item-desc">Infinite undo/redo history survives page refresh</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tools-canvas-preview sr" id="tools-canvas-preview">
+          <div class="tools-canvas-header">
+            <span>Slateboard Canvas</span>
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+              <div class="tools-canvas-dot"></div>
+              <span>Local Board</span>
+            </div>
+          </div>
+          <div class="tools-mini-canvas">
+            <svg width="100%" height="100%" viewBox="0 0 440 300">
+              <!-- Example content on canvas -->
+              <rect x="30" y="40" width="120" height="80" fill="none" stroke="#000" stroke-width="3" />
+              <circle cx="330" cy="90" r="55" fill="rgba(255,107,107,0.2)" stroke="#ff6b6b" stroke-width="3" />
+              <line x1="150" y1="80" x2="270" y2="80" stroke="#000" stroke-width="2.5" marker-end="url(#ar)" />
+              <defs>
+                <marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                  <path d="M0,0 L6,3 L0,6Z" fill="#000" />
+                </marker>
+              </defs>
+              <text x="35" y="95" fill="#000" font-size="13" font-weight="700" font-family="Space Grotesk">INPUT</text>
+              <text x="295" y="95" fill="#ff6b6b" font-size="13" font-weight="700"
+                font-family="Space Grotesk">PROCESS</text>
+              <path d="M60,160 Q100,130 150,150 Q200,170 250,140 Q290,120 330,145" stroke="#2ec4b6" stroke-width="3"
+                fill="none" stroke-linecap="round" />
+              <text x="30" y="250" fill="#000" font-size="11" font-family="Space Mono, monospace" opacity="0.6">//
+                annotation mode active</text>
+              <circle cx="380" cy="220" r="6" fill="#ffd93d" stroke="#000" stroke-width="2" />
+              <circle cx="380" cy="220" r="18" fill="none" stroke="#ffd93d" stroke-width="2" stroke-dasharray="4 4" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== USE CASES ===== -->
+  <section class="usecases-section" id="use-cases">
+    <div class="section-label">Built For</div>
+    <h2 class="section-title">Who Uses<br>Slateboard?</h2>
+    <p class="section-subtitle">From math tutors to CS professors — Slateboard fits any teaching or learning context.
+    </p>
+
+    <div class="usecases-grid">
+      <article class="usecase-card sr" id="uc1">
+        <span class="usecase-icon">🧑‍🏫</span>
+        <h3 class="usecase-title">Teachers & Educators</h3>
+        <p class="usecase-desc">Deliver live lessons, draw diagrams on-the-fly, and annotate student work in real-time
+          without setup overhead.</p>
+        <ul class="usecase-features">
+          <li>Live lecture diagrams</li>
+          <li>Problem solving walkthroughs</li>
+          <li>Lab diagram annotation</li>
+          <li>Exam prep boards</li>
+        </ul>
+      </article>
+
+      <article class="usecase-card sr" id="uc2">
+        <span class="usecase-icon">🧑‍🎓</span>
+        <h3 class="usecase-title">Students & Learners</h3>
+        <p class="usecase-desc">Sketch notes, diagram concepts, and organize your thoughts visually. Your board persists
+          every session.</p>
+        <ul class="usecase-features">
+          <li>Visual note-taking</li>
+          <li>Concept mapping</li>
+          <li>Study group boards</li>
+          <li>Math problem solving</li>
+        </ul>
+      </article>
+
+      <article class="usecase-card sr" id="uc3">
+        <span class="usecase-icon">💡</span>
+        <h3 class="usecase-title">Ideas & Brainstorming</h3>
+        <p class="usecase-desc">Jump straight into sketching ideas without cluttered UIs. Raw, fast, and purpose-built
+          for getting thoughts out.</p>
+        <ul class="usecase-features">
+          <li>Quick idea sketches</li>
+          <li>Wireframe drafts</li>
+          <li>Mind maps</li>
+          <li>Flow diagrams</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <div class="cta-section" id="cta-section">
+    <div class="cta-bg-text">Draw</div>
+    <div class="cta-inner">
+      <div>
+        <h2 class="cta-title">The Canvas<br>Is Waiting.</h2>
+        <p class="cta-subtitle">No account. No setup. Just open the board and start drawing. Your ideas are one click
+          away.</p>
+      </div>
+      <div class="cta-actions">
+        <a href="./board.html" class="btn-cta-primary" id="cta-draw-btn">
+          <i class="fa-solid fa-pen-nib"></i>
+          Open The Board
+        </a>
+        <a href="./auth.html" class="btn-cta-secondary" id="cta-auth-btn">
+          <i class="fa-solid fa-user-plus"></i>
+          Create Account
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <!-- Brand col -->
+        <div>
+          <div class="footer-brand-logo">Slateboard</div>
+          <p class="footer-brand-desc">
+            A draw-first virtual whiteboard for teachers and students.<br>
+            Built with neo-brutalist design and local-first philosophy.<br>
+            Canvas always front and center.
+          </p>
+          <div class="footer-social">
+            <a href="https://github.com/priyanshukamal26/slateboard" class="footer-social-link" target="_blank"
+              rel="noopener" aria-label="GitHub">
+              <i class="fa-brands fa-github"></i>
+            </a>
+            <a href="./board.html" class="footer-social-link" aria-label="Open Board">
+              <i class="fa-solid fa-pen-nib"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Product col -->
+        <div>
+          <div class="footer-col-title">Product</div>
+          <ul class="footer-links">
+            <li><a href="./board.html">Drawing Board</a></li>
+            <li><a href="./auth.html">Sign In</a></li>
+            <li><a href="./auth.html">Register</a></li>
+            <li><a href="./dashboard.html">Dashboard</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+          </ul>
+        </div>
+
+        <!-- Resources col -->
+        <div>
+          <div class="footer-col-title">Resources</div>
+          <ul class="footer-links">
+            <li><a href="https://github.com/priyanshukamal26/slateboard" target="_blank" rel="noopener">GitHub Repo</a>
+            </li>
+            <li><a href="#use-cases">Use Cases</a></li>
+            <li><a href="#tools">Tools Overview</a></li>
+          </ul>
+        </div>
+
+        <!-- Team col -->
+        <div>
+          <div class="footer-col-title">The Team</div>
+          <ul class="footer-team-list">
+            <li class="footer-team-member">
+              <div class="footer-team-name">Priyanshu Kamal</div>
+              <div class="footer-team-links">
+                <a href="https://www.linkedin.com/in/priyanshukamal/" class="footer-team-link" target="_blank"
+                  rel="noopener"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+                <a href="https://github.com/priyanshukamal26/" class="footer-team-link" target="_blank"
+                  rel="noopener"><i class="fa-brands fa-github"></i> GitHub</a>
+              </div>
+            </li>
+            <li class="footer-team-member">
+              <div class="footer-team-name">Shivani Butolia</div>
+              <div class="footer-team-links">
+                <a href="https://www.linkedin.com/in/shivanibutolia/" class="footer-team-link" target="_blank"
+                  rel="noopener"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+                <a href="https://github.com/shiva08b" class="footer-team-link" target="_blank" rel="noopener"><i
+                    class="fa-brands fa-github"></i> GitHub</a>
+              </div>
+            </li>
+            <li class="footer-team-member">
+              <div class="footer-team-name">Madhav Singla</div>
+              <div class="footer-team-links">
+                <a href="https://www.linkedin.com/in/madhav-singla-a366a7356/" class="footer-team-link" target="_blank"
+                  rel="noopener"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+                <a href="https://github.com/Mad-glitc" class="footer-team-link" target="_blank" rel="noopener"><i
+                    class="fa-brands fa-github"></i> GitHub</a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2025 Slateboard. Built with ♥ for teachers & students. Open source.</p>
+        <div class="footer-badge">
+          <i class="fa-solid fa-circle-dot" style="color: #06d6a0;"></i>
+          Phase 1 — Local First
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating GitHub btn -->
+  <a href="https://github.com/priyanshukamal26/slateboard" target="_blank" rel="noopener noreferrer"
+    class="github-float-btn" aria-label="View GitHub repository" title="GitHub Repository">
+    <i class="fa-brands fa-github"></i>
+  </a>
+
+  <!-- ===== GSAP ===== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
+
+  <script>
+    // ===== GSAP SETUP =====
+    gsap.registerPlugin(ScrollTrigger, TextPlugin);
+
+    // ===== CURSOR TRAIL =====
+    const trail = document.getElementById('cursor-trail');
+    let mx = 0, my = 0;
+    document.addEventListener('mousemove', (e) => {
+      mx = e.clientX; my = e.clientY;
+      gsap.to(trail, { x: mx, y: my, duration: 0.15, ease: 'power2.out' });
+    });
+    document.addEventListener('mousedown', () => gsap.to(trail, { scale: 0.5, duration: 0.1 }));
+    document.addEventListener('mouseup', () => gsap.to(trail, { scale: 1, duration: 0.15 }));
+
+    // ===== NAV SCROLL EFFECT =====
+    ScrollTrigger.create({
+      start: 100,
+      onEnter: () => gsap.to('#main-nav', { y: 0, duration: 0.3 }),
+      onLeaveBack: () => gsap.to('#main-nav', { y: 0, duration: 0.3 }),
+    });
+
+    // ===== HERO ANIMATIONS =====
+    const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+    heroTl
+      .set('.sr', { opacity: 0, y: 40 })
+      .to('#hero-eyebrow', { opacity: 1, y: 0, duration: 0.7 }, 0.3)
+      .to('#hw1', { opacity: 1, y: 0, duration: 0.6 }, 0.5)
+      .to('#hw2', { opacity: 1, y: 0, duration: 0.6 }, 0.65)
+      .to('#hw3', { opacity: 1, y: 0, duration: 0.6 }, 0.8)
+      .to('#hw4', { opacity: 1, y: 0, duration: 0.6 }, 0.85)
+      .to('#hero-sub', { opacity: 1, y: 0, duration: 0.6 }, 1.0)
+      .to('#hero-actions', { opacity: 1, y: 0, duration: 0.6 }, 1.15)
+      .to('#hero-stats', { opacity: 1, y: 0, duration: 0.6 }, 1.3)
+      .to('#hero-canvas', { opacity: 1, y: 0, duration: 0.8, ease: 'back.out(1.4)' }, 0.9)
+      .add(animateCanvas, 1.5);
+
+    // ===== HERO CANVAS ANIMATION =====
+    function animateCanvas() {
+      const paths = [
+        { el: '#draw-path-1', offset: 500, dur: 1.8 },
+        { el: '#draw-path-2', offset: 300, dur: 1.2, delay: 0.5 },
+        { el: '#draw-path-3', offset: 220, dur: 1.0, delay: 1.0 },
+        { el: '#draw-path-4', offset: 350, dur: 1.4, delay: 1.5 },
+      ];
+
+      paths.forEach(({ el, offset, dur, delay = 0 }) => {
+        gsap.to(el, {
+          strokeDashoffset: 0,
+          duration: dur,
+          delay,
+          ease: 'power2.inOut',
+        });
       });
-      document.addEventListener('mousedown', () => gsap.to(trail, { scale: 0.5, duration: 0.1 }));
-      document.addEventListener('mouseup', () => gsap.to(trail, { scale: 1, duration: 0.15 }));
 
-      // ===== NAV SCROLL EFFECT =====
-      ScrollTrigger.create({
-        start: 100,
-        onEnter: () => gsap.to('#main-nav', { y: 0, duration: 0.3 }),
-        onLeaveBack: () => gsap.to('#main-nav', { y: 0, duration: 0.3 }),
+      gsap.to('#draw-text-1', { opacity: 1, duration: 0.4, delay: 2.2 });
+      gsap.to('#draw-line-1', { strokeDashoffset: 0, duration: 0.4, delay: 2.2 });
+
+      // Animate cursor moving around
+      const cursorPath = [
+        { left: '45px', top: '190px' },
+        { left: '130px', top: '150px' },
+        { left: '210px', top: '90px' },
+        { left: '280px', top: '110px' },
+        { left: '290px', top: '55px' },
+        { left: '380px', top: '95px' },
+        { left: '60px', top: '235px' },
+        { left: '200px', top: '215px' },
+        { left: '330px', top: '230px' },
+      ];
+
+      let delay = 0.2;
+      cursorPath.forEach((pos) => {
+        gsap.to('#hero-cursor', { ...pos, duration: 0.8, delay, ease: 'power2.inOut' });
+        delay += 0.6;
       });
+    }
 
-      // ===== HERO ANIMATIONS =====
-      const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    // Repeat the canvas animation every ~10s
+    setInterval(function () {
+      document.querySelectorAll('#draw-path-1, #draw-path-2, #draw-path-3, #draw-path-4, #draw-line-1').forEach(el => {
+        const len = el.getTotalLength ? el.getTotalLength() : 400;
+        el.setAttribute('stroke-dashoffset', len);
+      });
+      gsap.set('#draw-text-1', { opacity: 0 });
+      animateCanvas();
+    }, 8000);
 
-      heroTl
-        .set('.sr', { opacity: 0, y: 40 })
-        .to('#hero-eyebrow', { opacity: 1, y: 0, duration: 0.7 }, 0.3)
-        .to('#hw1', { opacity: 1, y: 0, duration: 0.6 }, 0.5)
-        .to('#hw2', { opacity: 1, y: 0, duration: 0.6 }, 0.65)
-        .to('#hw3', { opacity: 1, y: 0, duration: 0.6 }, 0.8)
-        .to('#hw4', { opacity: 1, y: 0, duration: 0.6 }, 0.85)
-        .to('#hero-sub', { opacity: 1, y: 0, duration: 0.6 }, 1.0)
-        .to('#hero-actions', { opacity: 1, y: 0, duration: 0.6 }, 1.15)
-        .to('#hero-stats', { opacity: 1, y: 0, duration: 0.6 }, 1.3)
-        .to('#hero-canvas', { opacity: 1, y: 0, duration: 0.8, ease: 'back.out(1.4)' }, 0.9)
-        .add(animateCanvas, 1.5);
-
-      // ===== HERO CANVAS ANIMATION =====
-      function animateCanvas() {
-        const paths = [
-          { el: '#draw-path-1', offset: 500, dur: 1.8 },
-          { el: '#draw-path-2', offset: 300, dur: 1.2, delay: 0.5 },
-          { el: '#draw-path-3', offset: 220, dur: 1.0, delay: 1.0 },
-          { el: '#draw-path-4', offset: 350, dur: 1.4, delay: 1.5 },
-        ];
-
-        paths.forEach(({ el, offset, dur, delay = 0 }) => {
-          gsap.to(el, {
-            strokeDashoffset: 0,
-            duration: dur,
-            delay,
-            ease: 'power2.inOut',
-          });
-        });
-
-        gsap.to('#draw-text-1', { opacity: 1, duration: 0.4, delay: 2.2 });
-        gsap.to('#draw-line-1', { strokeDashoffset: 0, duration: 0.4, delay: 2.2 });
-
-        // Animate cursor moving around
-        const cursorPath = [
-          { left: '45px', top: '190px' },
-          { left: '130px', top: '150px' },
-          { left: '210px', top: '90px' },
-          { left: '280px', top: '110px' },
-          { left: '290px', top: '55px' },
-          { left: '380px', top: '95px' },
-          { left: '60px', top: '235px' },
-          { left: '200px', top: '215px' },
-          { left: '330px', top: '230px' },
-        ];
-
-        let delay = 0.2;
-        cursorPath.forEach((pos) => {
-          gsap.to('#hero-cursor', { ...pos, duration: 0.8, delay, ease: 'power2.inOut' });
-          delay += 0.6;
-        });
-      }
-
-      // Repeat the canvas animation every ~10s
-      setInterval(function() {
-        document.querySelectorAll('#draw-path-1, #draw-path-2, #draw-path-3, #draw-path-4, #draw-line-1').forEach(el => {
-          const len = el.getTotalLength ? el.getTotalLength() : 400;
-          el.setAttribute('stroke-dashoffset', len);
-        });
-        gsap.set('#draw-text-1', { opacity: 0 });
-        animateCanvas();
-      }, 8000);
-
-      // ===== COUNTER ANIMATION =====
-      function animateCounter(el, target, suffix = '') {
-        gsap.to({ val: 0 }, {
-          val: target,
-          duration: 1.8,
-          ease: 'power2.out',
-          onUpdate: function() {
-            el.textContent = Math.round(this.targets()[0].val) + suffix;
-          }
-        });
-      }
-
-      ScrollTrigger.create({
-        trigger: '#hero-stats',
-        start: 'top 80%',
-        once: true,
-        onEnter: () => {
-          animateCounter(document.getElementById('stat-tools'), 12, '+');
-          animateCounter(document.getElementById('stat-zero'), 0, '');
+    // ===== COUNTER ANIMATION =====
+    function animateCounter(el, target, suffix = '') {
+      gsap.to({ val: 0 }, {
+        val: target,
+        duration: 1.8,
+        ease: 'power2.out',
+        onUpdate: function () {
+          el.textContent = Math.round(this.targets()[0].val) + suffix;
         }
       });
+    }
 
-      // ===== FEATURE CARDS =====
-      gsap.utils.toArray(['#fc1','#fc2','#fc3','#fc4','#fc5','#fc6']).forEach((el, i) => {
-        gsap.fromTo(el,
-          { opacity: 0, y: 60 },
-          {
-            opacity: 1, y: 0,
-            duration: 0.7,
-            delay: (i % 3) * 0.15,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: el,
-              start: 'top 85%',
-              once: true,
-            }
-          }
-        );
-      });
+    ScrollTrigger.create({
+      trigger: '#hero-stats',
+      start: 'top 80%',
+      once: true,
+      onEnter: () => {
+        animateCounter(document.getElementById('stat-tools'), 12, '+');
+        animateCounter(document.getElementById('stat-zero'), 0, '');
+      }
+    });
 
-      // ===== HOW STEPS =====
-      gsap.utils.toArray(['#hs1','#hs2','#hs3','#hs4']).forEach((el, i) => {
-        gsap.fromTo(el,
-          { opacity: 0, y: 50 },
-          {
-            opacity: 1, y: 0,
-            duration: 0.6,
-            delay: i * 0.12,
-            ease: 'back.out(1.3)',
-            scrollTrigger: {
-              trigger: '#how-steps-wrap',
-              start: 'top 80%',
-              once: true,
-            }
-          }
-        );
-      });
-
-      // ===== TOOLS LIST =====
-      gsap.utils.toArray(['#ti1','#ti2','#ti3','#ti4','#ti5','#ti6']).forEach((el, i) => {
-        gsap.fromTo(el,
-          { opacity: 0, x: -50 },
-          {
-            opacity: 1, x: 0,
-            duration: 0.5,
-            delay: i * 0.1,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: '#tools-list',
-              start: 'top 80%',
-              once: true,
-            }
-          }
-        );
-      });
-
-      gsap.fromTo('#tools-canvas-preview',
-        { opacity: 0, x: 60 },
-        {
-          opacity: 1, x: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '#tools-canvas-preview',
-            start: 'top 80%',
-            once: true,
-          }
-        }
-      );
-
-      // ===== USE CASE CARDS =====
-      gsap.utils.toArray(['#uc1','#uc2','#uc3']).forEach((el, i) => {
-        gsap.fromTo(el,
-          { opacity: 0, y: 60, rotation: (i === 0 ? -2 : i === 2 ? 2 : 0) },
-          {
-            opacity: 1, y: 0, rotation: 0,
-            duration: 0.7,
-            delay: i * 0.15,
-            ease: 'back.out(1.2)',
-            scrollTrigger: {
-              trigger: el,
-              start: 'top 85%',
-              once: true,
-            }
-          }
-        );
-      });
-
-      // ===== CTA SECTION =====
-      gsap.fromTo('#cta-section',
-        { opacity: 0, y: 40 },
+    // ===== FEATURE CARDS =====
+    gsap.utils.toArray(['#fc1', '#fc2', '#fc3', '#fc4', '#fc5', '#fc6']).forEach((el, i) => {
+      gsap.fromTo(el,
+        { opacity: 0, y: 60 },
         {
           opacity: 1, y: 0,
-          duration: 0.8,
+          duration: 0.7,
+          delay: (i % 3) * 0.15,
           ease: 'power3.out',
           scrollTrigger: {
-            trigger: '#cta-section',
-            start: 'top 80%',
-            once: true,
-          }
-        }
-      );
-
-      // ===== CTA BG TEXT PARALLAX =====
-      gsap.to('.cta-bg-text', {
-        y: -60,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '#cta-section',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: true,
-        }
-      });
-
-      // ===== FLOATING LABELS =====
-      gsap.to('.hero-float-1', {
-        y: -12, rotation: -5,
-        duration: 2.5,
-        yoyo: true, repeat: -1,
-        ease: 'sine.inOut',
-      });
-      gsap.to('.hero-float-2', {
-        y: -10, rotation: 4,
-        duration: 3,
-        yoyo: true, repeat: -1,
-        ease: 'sine.inOut',
-        delay: 0.7,
-      });
-      gsap.to('.hero-float-3', {
-        y: -8, rotation: -2,
-        duration: 2.8,
-        yoyo: true, repeat: -1,
-        ease: 'sine.inOut',
-        delay: 1.2,
-      });
-
-      // ===== FOOTER TEAM REVEAL =====
-      gsap.fromTo('.footer-team-member',
-        { opacity: 0, x: -30 },
-        {
-          opacity: 1, x: 0,
-          duration: 0.5,
-          stagger: 0.12,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: '.footer-team-list',
+            trigger: el,
             start: 'top 85%',
             once: true,
           }
         }
       );
+    });
 
-      // ===== NAV LINK HOVER ANIMATION =====
-      document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('mouseenter', () => {
-          gsap.to(link, { y: -2, duration: 0.15, ease: 'power2.out' });
+    // ===== HOW STEPS =====
+    gsap.utils.toArray(['#hs1', '#hs2', '#hs3', '#hs4']).forEach((el, i) => {
+      gsap.fromTo(el,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1, y: 0,
+          duration: 0.6,
+          delay: i * 0.12,
+          ease: 'back.out(1.3)',
+          scrollTrigger: {
+            trigger: '#how-steps-wrap',
+            start: 'top 80%',
+            once: true,
+          }
+        }
+      );
+    });
+
+    // ===== TOOLS LIST =====
+    gsap.utils.toArray(['#ti1', '#ti2', '#ti3', '#ti4', '#ti5', '#ti6']).forEach((el, i) => {
+      gsap.fromTo(el,
+        { opacity: 0, x: -50 },
+        {
+          opacity: 1, x: 0,
+          duration: 0.5,
+          delay: i * 0.1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: '#tools-list',
+            start: 'top 80%',
+            once: true,
+          }
+        }
+      );
+    });
+
+    gsap.fromTo('#tools-canvas-preview',
+      { opacity: 0, x: 60 },
+      {
+        opacity: 1, x: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '#tools-canvas-preview',
+          start: 'top 80%',
+          once: true,
+        }
+      }
+    );
+
+    // ===== USE CASE CARDS =====
+    gsap.utils.toArray(['#uc1', '#uc2', '#uc3']).forEach((el, i) => {
+      gsap.fromTo(el,
+        { opacity: 0, y: 60, rotation: (i === 0 ? -2 : i === 2 ? 2 : 0) },
+        {
+          opacity: 1, y: 0, rotation: 0,
+          duration: 0.7,
+          delay: i * 0.15,
+          ease: 'back.out(1.2)',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            once: true,
+          }
+        }
+      );
+    });
+
+    // ===== CTA SECTION =====
+    gsap.fromTo('#cta-section',
+      { opacity: 0, y: 40 },
+      {
+        opacity: 1, y: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '#cta-section',
+          start: 'top 80%',
+          once: true,
+        }
+      }
+    );
+
+    // ===== CTA BG TEXT PARALLAX =====
+    gsap.to('.cta-bg-text', {
+      y: -60,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#cta-section',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: true,
+      }
+    });
+
+    // ===== FLOATING LABELS =====
+    gsap.to('.hero-float-1', {
+      y: -12, rotation: -5,
+      duration: 2.5,
+      yoyo: true, repeat: -1,
+      ease: 'sine.inOut',
+    });
+    gsap.to('.hero-float-2', {
+      y: -10, rotation: 4,
+      duration: 3,
+      yoyo: true, repeat: -1,
+      ease: 'sine.inOut',
+      delay: 0.7,
+    });
+    gsap.to('.hero-float-3', {
+      y: -8, rotation: -2,
+      duration: 2.8,
+      yoyo: true, repeat: -1,
+      ease: 'sine.inOut',
+      delay: 1.2,
+    });
+
+    // ===== FOOTER TEAM REVEAL =====
+    gsap.fromTo('.footer-team-member',
+      { opacity: 0, x: -30 },
+      {
+        opacity: 1, x: 0,
+        duration: 0.5,
+        stagger: 0.12,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.footer-team-list',
+          start: 'top 85%',
+          once: true,
+        }
+      }
+    );
+
+    // ===== NAV LINK HOVER ANIMATION =====
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('mouseenter', () => {
+        gsap.to(link, { y: -2, duration: 0.15, ease: 'power2.out' });
+      });
+      link.addEventListener('mouseleave', () => {
+        gsap.to(link, { y: 0, duration: 0.2, ease: 'bounce.out' });
+      });
+    });
+
+    // ===== FEATURE CARD ICON BOUNCE =====
+    document.querySelectorAll('.feature-card').forEach(card => {
+      const icon = card.querySelector('.feature-icon-wrap');
+      card.addEventListener('mouseenter', () => {
+        gsap.to(icon, { rotation: 10, scale: 1.1, duration: 0.2, ease: 'back.out(2)' });
+      });
+      card.addEventListener('mouseleave', () => {
+        gsap.to(icon, { rotation: 0, scale: 1, duration: 0.25, ease: 'elastic.out(1, 0.5)' });
+      });
+    });
+
+    // ===== HOW STEP HOVER =====
+    document.querySelectorAll('.how-step').forEach(step => {
+      const num = step.querySelector('.how-step-num');
+      step.addEventListener('mouseenter', () => {
+        gsap.to(num, { opacity: 0.25, scale: 1.15, duration: 0.25, ease: 'power2.out' });
+      });
+      step.addEventListener('mouseleave', () => {
+        gsap.to(num, { opacity: 0.12, scale: 1, duration: 0.25, ease: 'power2.out' });
+      });
+    });
+
+    // ===== BUTTON MAGNETIC EFFECT =====
+    ['.btn-hero-primary', '.btn-hero-secondary', '.btn-cta-primary', '.btn-cta-secondary'].forEach(sel => {
+      document.querySelectorAll(sel).forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+          const rect = btn.getBoundingClientRect();
+          const dx = (e.clientX - rect.left - rect.width / 2) * 0.2;
+          const dy = (e.clientY - rect.top - rect.height / 2) * 0.2;
+          gsap.to(btn, { x: dx, y: dy, duration: 0.3, ease: 'power2.out' });
         });
-        link.addEventListener('mouseleave', () => {
-          gsap.to(link, { y: 0, duration: 0.2, ease: 'bounce.out' });
+        btn.addEventListener('mouseleave', () => {
+          gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.4)' });
         });
       });
+    });
 
-      // ===== FEATURE CARD ICON BOUNCE =====
-      document.querySelectorAll('.feature-card').forEach(card => {
-        const icon = card.querySelector('.feature-icon-wrap');
-        card.addEventListener('mouseenter', () => {
-          gsap.to(icon, { rotation: 10, scale: 1.1, duration: 0.2, ease: 'back.out(2)' });
-        });
-        card.addEventListener('mouseleave', () => {
-          gsap.to(icon, { rotation: 0, scale: 1, duration: 0.25, ease: 'elastic.out(1, 0.5)' });
-        });
-      });
+  </script>
+</body>
 
-      // ===== HOW STEP HOVER =====
-      document.querySelectorAll('.how-step').forEach(step => {
-        const num = step.querySelector('.how-step-num');
-        step.addEventListener('mouseenter', () => {
-          gsap.to(num, { opacity: 0.25, scale: 1.15, duration: 0.25, ease: 'power2.out' });
-        });
-        step.addEventListener('mouseleave', () => {
-          gsap.to(num, { opacity: 0.12, scale: 1, duration: 0.25, ease: 'power2.out' });
-        });
-      });
-
-      // ===== BUTTON MAGNETIC EFFECT =====
-      ['.btn-hero-primary', '.btn-hero-secondary', '.btn-cta-primary', '.btn-cta-secondary'].forEach(sel => {
-        document.querySelectorAll(sel).forEach(btn => {
-          btn.addEventListener('mousemove', (e) => {
-            const rect = btn.getBoundingClientRect();
-            const dx = (e.clientX - rect.left - rect.width / 2) * 0.2;
-            const dy = (e.clientY - rect.top - rect.height / 2) * 0.2;
-            gsap.to(btn, { x: dx, y: dy, duration: 0.3, ease: 'power2.out' });
-          });
-          btn.addEventListener('mouseleave', () => {
-            gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.4)' });
-          });
-        });
-      });
-
-    </script>
-  </body>
 </html>

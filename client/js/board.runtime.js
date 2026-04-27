@@ -3090,7 +3090,6 @@
       // Initialize external panel controllers (they bind their own UI elements)
       if (window.ChatController)   engine.chatController   = new window.ChatController(engine.socket, engine.roomKey, engine.sessionUser);
       if (window.AiController)     engine.aiController     = new window.AiController(engine);
-      if (window.ReplayController) engine.replayController = new window.ReplayController(engine);
     }).catch(function () {
       engine.setSaveStatus("Init failed");
     });

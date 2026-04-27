@@ -8,7 +8,6 @@
 ### Key Features
 *   **Real-time Multi-user Drawing:** Synchronized canvas state with low-latency updates for multiple participants using WebSockets.
 *   **Academic AI (Brainy):** An integrated assistant that provides concise, context-aware academic help (strictly limited to educational topics).
-*   **Replay Engine:** A tool to playback the drawing process of a board stroke-by-stroke in the order they were created.
 *   **Rich Toolset:** Includes pens with variable pressure simulation, highlighters, geometric shapes (rectangles, ellipses, arrows), text elements, and image imports.
 *   **Hybrid Analytics & Audit:** A dual-database approach to track board activities, user sessions, and granular stroke-level audit trails.
 *   **Export Capabilities:** High-resolution export of boards to PNG (view or full canvas) and SVG formats.
@@ -79,7 +78,6 @@ The central rendering pipeline located in `client/js/canvas/engine.js`.
 
 ### AI Assistant (`Brainy`)
 *   **Logic:** Uses a strictly constrained system prompt to ensure responses are concise, academic, and formatted without complex Markdown headers.
-*   **Contextual Awareness:** Summarizes the current board state (tools used, text elements present) to provide relevant assistance.
 
 ---
 

@@ -598,63 +598,6 @@
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════
-           REPLAY PANEL
-      ═══════════════════════════════════════════ -->
-  <aside id="replay-panel" hidden aria-label="Replay" style="
-        position:fixed;top:0;right:0;bottom:0;width:300px;z-index:500;
-        background:var(--color-canvas);border-left:var(--border-heavy);
-        display:flex;flex-direction:column;
-        background-image:linear-gradient(to right,rgba(0,0,0,.06) 1px,transparent 1px),linear-gradient(to bottom,rgba(0,0,0,.06) 1px,transparent 1px);
-        background-size:24px 24px;">
-    <div
-      style="display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.1rem;border-bottom:var(--border-heavy);background:var(--color-accent);">
-      <span style="font-size:.8rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;"><i
-          class="fa-solid fa-clapperboard" style="margin-right:.4rem;"></i>Replay</span>
-      <button id="replay-close" type="button"
-        style="background:none;border:none;cursor:pointer;font-size:1rem;padding:.2rem;" aria-label="Close replay"><i
-          class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div style="padding:1.25rem;display:flex;flex-direction:column;gap:1rem;">
-      <p style="font-size:.72rem;font-family:'Space Mono',monospace;opacity:.6;margin:0;line-height:1.5;">Watch strokes
-        be replayed in the order they were drawn.</p>
-      <!-- Progress -->
-      <div
-        style="background:var(--color-white);border:var(--border-heavy);box-shadow:4px 4px 0 var(--color-ink);padding:.85rem;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:.5rem;">
-          <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;">Progress</span>
-          <span id="replay-counter" style="font-size:.65rem;font-family:'Space Mono',monospace;">0 / 0</span>
-        </div>
-        <progress id="replay-progress" value="0" max="100"
-          style="width:100%;height:.75rem;border:2px solid var(--color-ink);"></progress>
-      </div>
-      <!-- Speed -->
-      <div
-        style="background:var(--color-white);border:var(--border-heavy);box-shadow:4px 4px 0 var(--color-ink);padding:.85rem;">
-        <span
-          style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:.5rem;">Speed</span>
-        <div style="display:flex;gap:.5rem;">
-          <button id="replay-speed-1" type="button" class="is-active"
-            style="flex:1;padding:.4rem;border:var(--border-heavy);background:var(--color-secondary);font-weight:900;font-size:.75rem;cursor:pointer;">1×</button>
-          <button id="replay-speed-2" type="button"
-            style="flex:1;padding:.4rem;border:var(--border-heavy);background:var(--color-white);font-weight:900;font-size:.75rem;cursor:pointer;">2×</button>
-          <button id="replay-speed-4" type="button"
-            style="flex:1;padding:.4rem;border:var(--border-heavy);background:var(--color-white);font-weight:900;font-size:.75rem;cursor:pointer;">4×</button>
-        </div>
-      </div>
-      <!-- Controls -->
-      <div style="display:flex;gap:.75rem;">
-        <button id="replay-play" type="button"
-          style="flex:1;padding:.75rem;background:var(--color-ink);color:var(--color-canvas);border:var(--border-heavy);box-shadow:var(--shadow-hard);font-weight:900;font-size:.8rem;text-transform:uppercase;cursor:pointer;transition:transform .12s,box-shadow .12s;">
-          <i class="fa-solid fa-play"></i> Play
-        </button>
-        <button id="replay-stop" type="button"
-          style="padding:.75rem 1rem;background:var(--color-white);border:var(--border-heavy);box-shadow:var(--shadow-hard);font-weight:900;font-size:.8rem;cursor:pointer;transition:transform .12s,box-shadow .12s;">
-          <i class="fa-solid fa-stop"></i>
-        </button>
-      </div>
-    </div>
-  </aside>
 
   </div>
 
