@@ -17,6 +17,9 @@
 ## 2. System Architecture
 Slateboard follows a **decoupled client-server architecture** optimized for real-time interactivity and data integrity.
 
+<img width="1448" height="1086" alt="ChatGPT Image Apr 26, 2026, 10_07_54 PM (1)" src="https://github.com/user-attachments/assets/8ecf7e6e-629c-43b9-9a42-f2052a66fbfb" />
+
+
 ### Component Breakdown
 *   **Frontend (Client):** A vanilla JavaScript application served as static files. It utilizes the HTML5 Canvas API for rendering and Socket.io-client for real-time collaboration.
 *   **Backend (Server):** An Express.js server that manages RESTful APIs, authentication, and WebSocket namespaces.
